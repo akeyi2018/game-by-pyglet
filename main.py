@@ -4,13 +4,13 @@ from pyglet.window import Window
 # 画像を読み込む
 img = pyglet.resource.image('fortress.png')
 
+
 # 画像のサイズに基づいてウィンドウのサイズを設定
 window = Window(caption="Game", 
                               width=img.width, 
                               height=img.height, 
                               style=Window.WINDOW_STYLE_TRANSPARENT)
 
-platform = pyglet.app.platform  # プラットフォーム情報を取得
 display = pyglet.display.get_display()
 screen = display.get_default_screen()
 
