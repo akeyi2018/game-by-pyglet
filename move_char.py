@@ -71,9 +71,6 @@ def update(dt):
 @window.event
 def on_draw():
     window.clear()
-    glEnable(GL_BLEND)
-
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     character.draw()
 
 # 更新関数を定期的に呼び出す
