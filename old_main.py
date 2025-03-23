@@ -21,11 +21,7 @@ window.set_location(window_x, window_y)
 batch = pyglet.graphics.Batch()
 background = pyglet.graphics.Group(0)
 
-
 img = pyglet.sprite.Sprite(img_path, x=0, y=0, batch=batch, group=background)
-
-
-
 
 label = pyglet.text.Label('hello world pyglet..', 
                           font_name='Times New Roman', 
@@ -34,7 +30,6 @@ label = pyglet.text.Label('hello world pyglet..',
                           y=window.height // 2,
                           anchor_x='center',
                           anchor_y='center', batch=batch)
-
 
 @window.event
 def on_draw():
