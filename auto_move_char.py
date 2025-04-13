@@ -52,10 +52,9 @@ current_animation = 'right'
 def update(dt):
     global current_frame, elapsed_time, current_animation, vector_x, vector_y
 
-    
     # キャラクターの移動
     speed = 200 * dt  # 移動速度
-      
+
     # 自動移動
     character.x += speed * vector_x
     character.y += speed * vector_y
