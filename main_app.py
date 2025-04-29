@@ -28,7 +28,6 @@ class MainWin(pyglet.window.Window):
                                            batch=self.batch,
                                            group=self.background)
 
-
     def on_draw(self):
         self.clear()
         self.batch.draw()

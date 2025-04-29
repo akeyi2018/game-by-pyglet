@@ -54,7 +54,7 @@ class Character:
         }
 
     def update(self, dt):
-        speed = 200 * dt
+        speed = 100 * dt
         self.sprite.x += speed * self.vector_x
         self.sprite.y += speed * self.vector_y
 
@@ -79,4 +79,3 @@ class Character:
             self.elapsed_time = 0
             self.current_frame = (self.current_frame + 1) % len(self.animations[self.current_animation])
             self.sprite.image = self.animations[self.current_animation][self.current_frame]
-
