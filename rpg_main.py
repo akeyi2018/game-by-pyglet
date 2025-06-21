@@ -29,7 +29,7 @@ class Main:
         self.batch.draw()
 
     def update(self, dt):
-        self.player.update(self.keys, self.map)
+        self.player.update(self.keys, self.map, dt)
 
 
 if __name__ == '__main__':
