@@ -2,7 +2,7 @@ import pyglet
 from pyglet.window import key
 from settings import *
 from map import Map
-from player import Player
+from customerManager import CustomerManager
 
 class Main:
     def __init__(self):
@@ -14,11 +14,10 @@ class Main:
         self.window.push_handlers(self.keys)
 
         # Initialize map
-        self.map = Map(MAP_DATA, CELL_SIZE, self.batch, self.window_height)
+        self.map = Map(self.batch, self.window_height)
 
-        # Initialize player
-        px, py = self.map.player_start
-        self.player = Player(px, py, CELL_SIZE, self.batch, self.window_height)
+        # Initialize customer
+        self.customer_manager = CustomerManager(self)
 
         # Register events
         self.window.event(self.on_draw)
@@ -27,9 +26,10 @@ class Main:
     def on_draw(self):
         self.window.clear()
         self.batch.draw()
+        # self.customer_manager.draw_m()     # 四角のCustomerもここで
 
     def update(self, dt):
-        self.player.update(self.keys, self.map, dt)
+        self.customer_manager.update(dt)
 
 
 if __name__ == '__main__':

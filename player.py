@@ -62,6 +62,8 @@ class Player:
         self.moving = True
 
     def move_target(self, game_map: Map, dt):
+
+        # アニメーションでゆっくり動くようにしている
         if self.moving:
             self.move_timer += dt
             t = min(self.move_timer / self.move_duration, 1.0)
@@ -72,8 +74,10 @@ class Player:
 
             if t >= 1.0:
                 self.moving = False
+                
                 self.grid_x, self.grid_y = self.target_grid
 
+                # 着席判定
                 if self.grid_x == self.target_pos_x and self.grid_y == self.target_pos_y:
                     if not self.reached_target:
                         print("着席しました。")

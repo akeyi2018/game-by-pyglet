@@ -1,13 +1,16 @@
 import pyglet 
+from settings import *
 
 class Map:
-    def __init__(self, map_data, cell_size, batch, window_height):
-        self.map_data = map_data
-        self.cell_size = cell_size
+    def __init__(self, batch, window_height):
+        self.map_data = MAP_DATA
+        self.cell_size = CELL_SIZE
         self.batch = batch
         self.window_height = window_height
         self.tiles = []
-        self.npc_positions = []
+        self.wait_pos = []
+        self.customer_pos = []
+        self.table_pos = []
         self.player_start = (0, 0)
 
         self.load_map()
@@ -22,13 +25,26 @@ class Map:
                     rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
                                                    color=(50, 50, 50), batch=self.batch)
                     self.tiles.append(rect)
-                elif cell == 'N':
+                elif cell == 'W':
                     rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
-                                                   color=(255, 0, 0), batch=self.batch)
+                                                   color=(0, 0, 255), batch=self.batch)
                     self.tiles.append(rect)
-                    self.npc_positions.append((x, y))
+                    self.wait_pos.append((x, y))
+                elif cell == 'C':
+                    # rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
+                    #                                color=(0, 255, 255), batch=self.batch)
+                    # self.tiles.append(rect)
+                    self.customer_pos.append((x, y))
+                elif cell == 'T':
+                    rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
+                                                   color=(255, 255, 0), batch=self.batch)
+                    self.tiles.append(rect)
+                    self.table_pos.append((x, y))
                 elif cell == 'P':
                     self.player_start = (x, y)
+
+        # # 待機ポジションをリバース
+        self.wait_pos.reverse()
 
     def is_walkable(self, x, y):
         if 0 <= y < len(self.map_data) and 0 <= x < len(self.map_data[0]):
