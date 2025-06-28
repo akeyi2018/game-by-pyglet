@@ -11,7 +11,7 @@ class Map:
         self.wait_pos = []
         self.customer_pos = []
         self.table_pos = []
-        self.player_start = (0, 0)
+        self.seat_pos = []
 
         self.load_map()
 
@@ -31,17 +31,14 @@ class Map:
                     self.tiles.append(rect)
                     self.wait_pos.append((x, y))
                 elif cell == 'C':
-                    # rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
-                    #                                color=(0, 255, 255), batch=self.batch)
-                    # self.tiles.append(rect)
                     self.customer_pos.append((x, y))
                 elif cell == 'T':
                     rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
                                                    color=(255, 255, 0), batch=self.batch)
                     self.tiles.append(rect)
                     self.table_pos.append((x, y))
-                elif cell == 'P':
-                    self.player_start = (x, y)
+                elif cell == 'S':
+                    self.seat_pos.append((x,y))
 
         # # 待機ポジションをリバース
         self.wait_pos.reverse()

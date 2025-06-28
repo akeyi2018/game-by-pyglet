@@ -3,6 +3,7 @@ from pyglet.window import key
 from settings import *
 from map import Map
 from customerManager import CustomerManager
+from seat_manager import SeatManager
 
 class Main:
     def __init__(self):
@@ -19,6 +20,9 @@ class Main:
         # Initialize customer
         self.customer_manager = CustomerManager(self)
 
+        # seat manager
+        self.seat_manager = SeatManager(self)
+
         # Register events
         self.window.event(self.on_draw)
         pyglet.clock.schedule_interval(self.update, 1 / 60.0)
@@ -26,10 +30,10 @@ class Main:
     def on_draw(self):
         self.window.clear()
         self.batch.draw()
-        # self.customer_manager.draw_m()     # 四角のCustomerもここで
 
     def update(self, dt):
         self.customer_manager.update(dt)
+        # self.seat_manager.update(dt)
 
 
 if __name__ == '__main__':

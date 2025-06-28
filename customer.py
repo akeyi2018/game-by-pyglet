@@ -20,8 +20,12 @@ class Customer:
         self.moving = False
         self.move_duration = 0.2
         self.move_timer = 0.0
-        self.reached_target = False
+        # self.reached_target = False
         self.start_pixel = (self.sprite.x, self.sprite.y)
+
+    @property
+    def is_moving(self):
+        return self.moving
 
     def start_moving_to(self, new_x, new_y):
         self.start_grid = (self.grid_x, self.grid_y)
@@ -67,8 +71,8 @@ class Customer:
                     self.start_moving_to(self.grid_x, next_y)
 
     def update(self, dt, game_map):
-        if not self.reached_target:
-            self.move_target(game_map, dt)
+        self.move_target(game_map, dt)
 
-    def draw_cus(self):
-        pass  # バッチ処理されているので何もしない
+    @property
+    def reached_final_target(self):
+        return (self.grid_x, self.grid_y) == (self.target_pos_x, self.target_pos_y)
