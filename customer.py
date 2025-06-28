@@ -1,7 +1,13 @@
 import pyglet
 
 class Customer:
+    
+    _id_counter = 0  # クラス変数で一意なIDを管理
+
     def __init__(self, start_pos, target_pos, window_height, cell_size, color, batch):
+        self.id = Customer._id_counter  # 各顧客に一意のIDを付与
+        Customer._id_counter += 1
+        
         self.grid_x, self.grid_y = start_pos
         self.target_pos_x, self.target_pos_y = target_pos
         self.cell_size = cell_size
