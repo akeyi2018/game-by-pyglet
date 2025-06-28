@@ -22,6 +22,12 @@ class Customer:
         self.move_timer = 0.0
         self.start_pixel = (self.sprite.x, self.sprite.y)
 
+        # 退店処理
+        self.stay_timer = 0.0
+        self.exit_target = None
+        self.marked_for_removal = False  # 店から出たフラグ
+
+
     @property
     def is_moving(self):
         return self.moving

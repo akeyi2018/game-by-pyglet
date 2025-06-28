@@ -2,7 +2,7 @@ from settings import *
 from customer import Customer
 
 class CustomerManager:
-    def __init__(self, parent, num_customers=2):
+    def __init__(self, parent, num_customers=5):
         self.parent = parent
         
         self.cell_size = CELL_SIZE
@@ -10,6 +10,7 @@ class CustomerManager:
         self.batch = self.parent.batch
 
         self.customer_pos_list = parent.map.get_random_customer_positions(num_customers)
+        self.exit_pos_list = parent.map.get_exit_positions()
 
         # Wの数だけしか wait_pos がない場合に備える
         self.wait_pos_list = parent.map.wait_pos
@@ -31,17 +32,11 @@ class CustomerManager:
             self.customer_states.append("outside")
 
         self.active_customer = self.customers[0] if self.customers else None
-        # if self.active_customer:
-        #     self.customer_states[0] = "moving_to_wait"
-        
-        # print(f"[DEBUG] CustomerManager: 顧客数 = {len(self.customers)}")
 
     def update(self, dt):
         # Step 1: W に空きがあれば、outside → moving_to_wait にする
         for i, state in enumerate(self.customer_states):
             if state == "outside":
-                if i == 0:
-                    print(f"[DEBUG] Checking if Customer {i} can be assigned to W")
                 # すでに waiting_queue に入っているかチェック
                 already_in_queue = any(cust_i == i for cust_i, _ in self.waiting_queue)
                 if already_in_queue:
@@ -58,7 +53,6 @@ class CustomerManager:
                         # print(f"[DEBUG] Customer {i} assigned to W[{j}]")
                         break  # 1人だけWに入れる
 
-                
         # Step 2: moving_to_wait → waiting に状態変更
         for cust_i, wait_i in self.waiting_queue:
             customer = self.customers[cust_i]
@@ -69,7 +63,12 @@ class CustomerManager:
                     self.parent.seat_manager.customer_states[cust_i] = "waiting"
                     # print(f"[DEBUG] Customer {i} is now seated. Releasing wait_pos {wait_i}")
 
-        # self.print_wait_pos_status()
+        # 顧客の削除処理
+        for customer in self.customers[:]:
+            if customer.marked_for_removal:
+                # print(f"[DEBUG] Customer at ({customer.grid_x}, {customer.grid_y}) removed from game.")
+                customer.sprite.delete()  # スプライトが残っていれば削除（見た目からも消える）
+                self.customers.remove(customer)
 
     def print_wait_pos_status(self):
         status_line = "[WAIT_POS] "

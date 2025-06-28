@@ -27,12 +27,10 @@ class Map:
                                                    color=(50, 50, 50), batch=self.batch)
                     self.tiles.append(rect)
                 elif cell == 'W':
-                    rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
-                                                   color=(0, 0, 255), batch=self.batch)
-                    self.tiles.append(rect)
+                    # rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
+                    #                                color=(0, 0, 255), batch=self.batch)
+                    # self.tiles.append(rect)
                     self.wait_pos.append((x, y))
-                # elif cell == 'C':
-                #     self.customer_pos.append((x, y))
                 elif cell == 'T':
                     rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
                                                    color=(255, 255, 0), batch=self.batch)
@@ -43,6 +41,9 @@ class Map:
 
         # # 待機ポジションをリバース
         self.wait_pos.reverse()
+        # 退店位置
+        self.exit_pos_list = self.get_exit_positions()
+
 
     def is_walkable(self, x, y):
         if 0 <= y < len(self.map_data) and 0 <= x < len(self.map_data[0]):
@@ -64,3 +65,7 @@ class Map:
         result = available[:num_customers]
         # print(f"[DEBUG] 実際に生成される顧客数: {len(result)}")
         return result
+    
+    def get_exit_positions(self):
+        return [(x, y) for y, row in enumerate(self.map_data)
+                for x, cell in enumerate(row) if cell == 'D']

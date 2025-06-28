@@ -1,4 +1,7 @@
+from settings import *
+
 class SeatManager:
+
     def __init__(self, parent, customers):
         self.parent = parent
         self.customers = customers
@@ -37,3 +40,19 @@ class SeatManager:
                             # print(f"[DEBUG] Customer {i} is now seated. Releasing wait_pos {wait_i}")
                             break
 
+            if state == "seated":
+                customer.stay_timer += dt
+                if customer.stay_timer >= STAY_DURATION:
+                    # 退店へ
+                    exit_x, exit_y = self.parent.map.exit_pos_list[0]  # 複数あるならランダムでもOK
+                    customer.set_new_target(exit_x, exit_y)
+                    self.customer_states[i] = "leaving"
+                    customer.state = "leaving"
+                    customer.exit_target = (exit_x, exit_y)
+
+                    # print(f"[DEBUG] Customer {i} is now leaving.")
+                    
+            elif state == "leaving":
+                customer.update(dt, self.parent.map)
+                if not customer.is_moving and customer.reached_final_target:
+                    customer.marked_for_removal = True

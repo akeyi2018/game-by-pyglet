@@ -1,11 +1,12 @@
 # 定数
 CELL_SIZE = 32
+STAY_DURATION = 2.0
 MAP_DATA = [
     'BBBBBBBBBBBBBBBBBBB',
     '...................',
     '...................',
     '...................',
-    'BBBBBBBBBBBBBBBB..B',
+    'BBBBBBBBBBBBBBBBD.B',
     'B................WB',
     'B................WB',
     'B.STS.STS........WB',
@@ -15,7 +16,6 @@ MAP_DATA = [
     'B.STS.STS........WB',
     'B................WB',
     'B.STS.STS........WB',
-    '..................B',
+    'B.................B',
     'BBBBBBBBBBBBBBBBBBB',
 ]
-
