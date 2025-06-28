@@ -1,4 +1,5 @@
-import pyglet 
+import pyglet
+import random 
 from settings import *
 
 class Map:
@@ -30,8 +31,8 @@ class Map:
                                                    color=(0, 0, 255), batch=self.batch)
                     self.tiles.append(rect)
                     self.wait_pos.append((x, y))
-                elif cell == 'C':
-                    self.customer_pos.append((x, y))
+                # elif cell == 'C':
+                #     self.customer_pos.append((x, y))
                 elif cell == 'T':
                     rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
                                                    color=(255, 255, 0), batch=self.batch)
@@ -47,3 +48,19 @@ class Map:
         if 0 <= y < len(self.map_data) and 0 <= x < len(self.map_data[0]):
             return self.map_data[y][x] != 'B'
         return False
+    
+    def get_random_customer_positions(self, num_customers, area_rows=(1, 4)):
+        available = []
+
+        for y in range(area_rows[0], area_rows[1]):
+            for x in range(len(self.map_data[0])):
+                if self.map_data[y][x] == '.':
+                    available.append((x, y))
+
+        # print(f"[DEBUG] 上部エリアの空きマス数: {len(available)}")  # ← これ重要
+        # print(f"[DEBUG] 顧客生成要求数: {num_customers}")
+
+        random.shuffle(available)
+        result = available[:num_customers]
+        # print(f"[DEBUG] 実際に生成される顧客数: {len(result)}")
+        return result

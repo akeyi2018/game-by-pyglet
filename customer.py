@@ -20,7 +20,6 @@ class Customer:
         self.moving = False
         self.move_duration = 0.2
         self.move_timer = 0.0
-        # self.reached_target = False
         self.start_pixel = (self.sprite.x, self.sprite.y)
 
     @property
@@ -73,6 +72,12 @@ class Customer:
     def update(self, dt, game_map):
         self.move_target(game_map, dt)
 
+    def set_new_target(self, target_x, target_y):
+        self.target_pos_x = target_x
+        self.target_pos_y = target_y
+        # self.reached_final_target = False
+
     @property
     def reached_final_target(self):
+        """目的到着判定"""
         return (self.grid_x, self.grid_y) == (self.target_pos_x, self.target_pos_y)

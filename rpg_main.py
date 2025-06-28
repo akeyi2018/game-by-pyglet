@@ -21,7 +21,7 @@ class Main:
         self.customer_manager = CustomerManager(self)
 
         # seat manager
-        self.seat_manager = SeatManager(self)
+        self.seat_manager = SeatManager(self, self.customer_manager.customers)
 
         # Register events
         self.window.event(self.on_draw)
@@ -33,7 +33,8 @@ class Main:
 
     def update(self, dt):
         self.customer_manager.update(dt)
-        # self.seat_manager.update(dt)
+        self.seat_manager.assign_seats()  # 座席割当
+        self.seat_manager.update(dt)      # 座席までの移動処理
 
 
 if __name__ == '__main__':
