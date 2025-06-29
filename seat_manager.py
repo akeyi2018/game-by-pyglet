@@ -23,26 +23,28 @@ class SeatManager:
 
         self.move_to_seat(dt)
 
+        # self.shift_waiting_customers_forward()
+
         self.eating(dt)
 
         self.move_to_exit(dt)
 
     def assign_seat(self):
-
-        # 👇 座席が空いていれば waiting 状態の顧客を座席に誘導
-        for customer in self.customers:
+        for customer, wait_idx in self.parent.customer_manager.waiting_queue:
             if customer.state == "waiting":
                 for j, in_use in enumerate(self.seat_in_use):
                     if not in_use:
                         self.seat_in_use[j] = True
-                        seat_pos = self.parent.map.seat_pos[j]
-                        customer.set_new_target(*seat_pos)
-                        # 顧客をキューへ
-                        self.seat_queue.append((customer, j)) 
-
+                        customer.set_new_target(*self.parent.map.seat_pos[j])
                         customer.state = "moving_to_seat"
-                        self.log(f"【座席割当】id: {customer.id} seat: [{j}] pos: {seat_pos} state:{customer.state}")
-                        break  # この顧客には席が見つかったので、次の顧客へ
+                        customer.sprite.color = (231,115,35)
+                        self.seat_queue.append((customer, j))
+                        self.log(f"【座席割当】id: {customer.id} → seat[{j}]")
+                        # Wを解放し、詰め処理へ
+                        self.parent.customer_manager.wait_pos_in_use[wait_idx] = False
+                        self.parent.customer_manager.waiting_queue.remove((customer, wait_idx))
+                        self.parent.customer_manager.shift_waiting_customers_forward()
+                        return
 
     def move_to_seat(self, dt):
         for customer in self.customers:
@@ -85,3 +87,4 @@ class SeatManager:
                 if not customer.is_moving and customer.reached_final_target:
                     customer.state = "exited"
                     self.log(f"【退店】id: {customer.id} state: {customer.state}")
+

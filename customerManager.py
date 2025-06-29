@@ -83,6 +83,7 @@ class CustomerManager:
                         target = self.wait_pos_list[j]
                         customer.set_new_target(*target)
                         customer.state = "moving_to_wait"
+                        customer.sprite.color = (90,142,71)
                         self.log(f"【待機場所割当】id: {customer.id} index: W[{j}] pos: {target} state: {customer.state}")
                         break  # 1人だけWに入れる
 
@@ -92,7 +93,10 @@ class CustomerManager:
             if customer.state == "moving_to_wait":
                 customer.update(dt, self.parent.map)
                 if not customer.is_moving and customer.reached_final_target:
-                    customer.state = "waiting"
+                    if wait_i == 0:
+                        customer.state = "waiting"
+                    else:
+                        customer.state = "waiting_for_top"
                     self.log(f"【待機場所到着】id: {customer.id} index: W[{wait_i}] state: {customer.state}")
 
     def delete_customer(self):
@@ -101,3 +105,19 @@ class CustomerManager:
             if customer.state == "exited":
                 self.log(f"【顧客削除】id: {customer.id}")
                 self.customers.pop(i)
+
+
+    def shift_waiting_customers_forward(self):
+        # 待機列を wait_i 昇順でチェック
+        for i in range(len(self.wait_pos_in_use)):
+            if not self.wait_pos_in_use[i]:
+                # 後ろの顧客を詰める
+                for idx, (customer, current_i) in enumerate(self.waiting_queue):
+                    if current_i > i:
+                        self.waiting_queue[idx] = (customer, i)
+                        self.wait_pos_in_use[current_i] = False
+                        self.wait_pos_in_use[i] = True
+                        customer.set_new_target(*self.wait_pos_list[i])
+                        customer.state = "moving_to_wait"
+                        self.log(f"【詰め移動】id: {customer.id} from W[{current_i}] → W[{i}]")
+                        break  # 1人だけ詰める

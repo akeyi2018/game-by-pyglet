@@ -26,7 +26,7 @@ class Customer:
         )
 
         self.moving = False
-        self.move_duration = 0.01
+        self.move_duration = 0.2
         self.move_timer = 0.0
         self.start_pixel = (self.sprite.x, self.sprite.y)
 
