@@ -7,7 +7,7 @@ class Customer:
     def __init__(self, start_pos, target_pos, window_height, cell_size, color, batch):
         self.id = Customer._id_counter  # 各顧客に一意のIDを付与
         Customer._id_counter += 1
-        
+
         self.grid_x, self.grid_y = start_pos
         self.target_pos_x, self.target_pos_y = target_pos
         self.cell_size = cell_size
@@ -24,14 +24,12 @@ class Customer:
         )
 
         self.moving = False
-        self.move_duration = 0.2
+        self.move_duration = 0.01
         self.move_timer = 0.0
         self.start_pixel = (self.sprite.x, self.sprite.y)
 
         # 退店処理
         self.stay_timer = 0.0
-        self.exit_target = None
-        self.marked_for_removal = False  # 店から出たフラグ
 
 
     @property
@@ -65,8 +63,6 @@ class Customer:
                 self.moving = False
                 self.grid_x, self.grid_y = self.target_grid
                 
-                if (self.grid_x, self.grid_y) == (self.target_pos_x, self.target_pos_y):
-                    self.reached_target = True
         else:
             if self.grid_x != self.target_pos_x:
                 step_x = 1 if self.target_pos_x > self.grid_x else -1
@@ -87,7 +83,6 @@ class Customer:
     def set_new_target(self, target_x, target_y):
         self.target_pos_x = target_x
         self.target_pos_y = target_y
-        # self.reached_final_target = False
 
     @property
     def reached_final_target(self):

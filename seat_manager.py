@@ -83,21 +83,13 @@ class SeatManager:
                             self.seat_queue.pop(idx)
                             self.log(f"【座席解放】id: {customer.id} seat: [{seat_i}]")  
 
-            # elif state == "leaving":
-            #     customer.update(dt, self.parent.map)
-            #     if not customer.is_moving and customer.reached_final_target:
-            #         customer.marked_for_removal = True
-            #         self.customer_states[i] = "exited"
-            #         self.parent.customer_manager.customer_states[i] = "exited"
-            #         self.log(f"【退店】id: {customer.id} state: {self.customer_states[i]}")
-    
     def move_to_exit(self, dt):
         for i, customer in enumerate(self.customers):
             state = self.customer_states[i]
             if state == "leaving":
                 customer.update(dt, self.parent.map)
                 if not customer.is_moving and customer.reached_final_target:
-                    customer.marked_for_removal = True
+                    # customer.marked_for_removal = True
                     self.customer_states[i] = "exited"
                     self.parent.customer_manager.customer_states[i] = "exited"
                     self.log(f"【退店】id: {customer.id} state: {self.customer_states[i]}")

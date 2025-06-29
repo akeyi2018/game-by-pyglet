@@ -27,9 +27,6 @@ class Map:
                                                    color=(50, 50, 50), batch=self.batch)
                     self.tiles.append(rect)
                 elif cell == 'W':
-                    # rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
-                    #                                color=(0, 0, 255), batch=self.batch)
-                    # self.tiles.append(rect)
                     self.wait_pos.append((x, y))
                 elif cell == 'T':
                     rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
@@ -58,12 +55,8 @@ class Map:
                 if self.map_data[y][x] == '.':
                     available.append((x, y))
 
-        # print(f"[DEBUG] 上部エリアの空きマス数: {len(available)}")  # ← これ重要
-        # print(f"[DEBUG] 顧客生成要求数: {num_customers}")
-
         random.shuffle(available)
         result = available[:num_customers]
-        # print(f"[DEBUG] 実際に生成される顧客数: {len(result)}")
         return result
     
     def get_exit_positions(self):

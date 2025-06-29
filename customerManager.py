@@ -66,10 +66,9 @@ class CustomerManager:
             return
 
         start = pos_list[0]
-        wait = pos_list[0]
 
         # 3. 顧客を生成して追加
-        customer = Customer(start, wait, self.window_height, self.cell_size, self.color, self.batch)
+        customer = Customer(start, start, self.window_height, self.cell_size, self.color, self.batch)
         self.customers.append(customer)
         self.customer_states.append("outside")
         self.log(f"【顧客生成】id: {customer.id} pos: {start} ")
@@ -106,7 +105,5 @@ class CustomerManager:
         for i, (customer, state) in enumerate(zip(self.customers, self.customer_states)):
             if state == "exited":
                 self.log(f"【顧客削除】id: {customer.id}")
-                # self.customer_states.pop(i)
-                # self.customers.pop(i)
-                self.parent.seat_manager.customers.pop(i)
-                self.parent.seat_manager.customer_states.pop(i)
+                self.customer_states.pop(i)
+                self.customers.pop(i)
