@@ -30,9 +30,6 @@ class Main:
         # seat manager
         self.seat_manager = SeatManager(self, log_func=self.log)
 
-        # 顧客生成
-        self.customer_manager.setup_initial_customers()
-
         # Register events
         self.window.event(self.on_draw)
         pyglet.clock.schedule_interval(self.update, 1 / 60.0)
@@ -53,7 +50,6 @@ class Main:
 
     def update(self, dt):
         self.customer_manager.update(dt)
-        # self.seat_manager.assign_seats()  # 座席割当
         self.seat_manager.update(dt)      # 座席までの移動処理
 
 

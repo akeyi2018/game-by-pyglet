@@ -21,7 +21,6 @@ class CustomerManager:
         # 待機場所管理リスト（使われているかどうか）  
         self.wait_pos_in_use = [False] * len(self.wait_pos_list)
 
-        self.customer_states = []  # 各顧客の状態
         self.customers = [] # 顧客本体のリスト
         self.num_customers_to_initialize = num_customers
 
@@ -32,14 +31,13 @@ class CustomerManager:
 
         self.color = (0, 255, 255)
 
+        # 初期顧客
+        self.setup_initial_customers()
+
     def setup_initial_customers(self):
-        
         # ⭐ 初期顧客を spawn_customer() 経由で生成
         for _ in range(self.num_customers_to_initialize):
             self.spawn_customer()
-
-        # SeatManager に customers リストの参照を渡す
-        self.parent.seat_manager.set_customer_list(self.customers, self.customer_states)
 
     def update(self, dt):
 
@@ -60,50 +58,46 @@ class CustomerManager:
                 self.spawn_customer()
 
     def spawn_customer(self):
+        # 顧客生成エリア（店外）を取得
         pos_list = self.parent.map.get_random_customer_positions(1)
         if not pos_list:
             print("[DEBUG] 顧客生成失敗：初期位置が取得できません")
             return
 
-        start = pos_list[0]
+        customer_pos = pos_list[0]
 
-        # 3. 顧客を生成して追加
-        customer = Customer(start, start, self.window_height, self.cell_size, self.color, self.batch)
+        # 顧客生成(店外)
+        state = "outside"
+        customer = Customer(customer_pos, customer_pos, state, self.window_height, self.cell_size, self.color, self.batch)
         self.customers.append(customer)
-        self.customer_states.append("outside")
-        self.log(f"【顧客生成】id: {customer.id} pos: {start} ")
+        self.log(f"【顧客生成】id: {customer.id} pos: {customer_pos} state: {state}")
 
     def assign_to_wait_pos(self):
         # Step 1: W に空きがあれば、outside → moving_to_wait にする
-        for i, (customer, state) in enumerate(zip(self.customers, self.customer_states)):
-            if state == "outside":
+        for customer in self.customers:
+            if customer.state == "outside":
                 for j, used in enumerate(self.wait_pos_in_use):
                     if not used:
                         self.wait_pos_in_use[j] = True
-                        self.waiting_queue.append((customer,j))
-
+                        self.waiting_queue.append((customer, j))
                         target = self.wait_pos_list[j]
                         customer.set_new_target(*target)
-                        self.customer_states[i] = "moving_to_wait"
-                        self.log(f"【待機場所割当】id: {customer.id} index: W[{j}] pos: {target} state: {self.customer_states[i]}")
+                        customer.state = "moving_to_wait"
+                        self.log(f"【待機場所割当】id: {customer.id} index: W[{j}] pos: {target} state: {customer.state}")
                         break  # 1人だけWに入れる
 
     def move_to_wait_pos(self, dt):
         # Step 2: moving_to_wait → waiting に状態変更
         for customer, wait_i in self.waiting_queue:
-            if customer in self.customers:
-                i = self.customers.index(customer)
-                if self.customer_states[i] == "moving_to_wait":
-                    customer.update(dt, self.parent.map)
-                    if not customer.is_moving and customer.reached_final_target:
-                        self.customer_states[i] = "waiting"
-                        self.parent.seat_manager.customer_states[i] = "waiting"
-                        self.log(f"【待機場所到着】id: {customer.id} index: W[{wait_i}] state: {self.customer_states[i]}")
+            if customer.state == "moving_to_wait":
+                customer.update(dt, self.parent.map)
+                if not customer.is_moving and customer.reached_final_target:
+                    customer.state = "waiting"
+                    self.log(f"【待機場所到着】id: {customer.id} index: W[{wait_i}] state: {customer.state}")
 
     def delete_customer(self):
         # 顧客の削除処理
-        for i, (customer, state) in enumerate(zip(self.customers, self.customer_states)):
-            if state == "exited":
+        for i, customer in enumerate(self.customers):
+            if customer.state == "exited":
                 self.log(f"【顧客削除】id: {customer.id}")
-                self.customer_states.pop(i)
                 self.customers.pop(i)

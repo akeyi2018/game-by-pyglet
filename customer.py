@@ -4,7 +4,7 @@ class Customer:
     
     _id_counter = 0  # クラス変数で一意なIDを管理
 
-    def __init__(self, start_pos, target_pos, window_height, cell_size, color, batch):
+    def __init__(self, start_pos, target_pos, state, window_height, cell_size, color, batch):
         self.id = Customer._id_counter  # 各顧客に一意のIDを付与
         Customer._id_counter += 1
 
@@ -12,6 +12,8 @@ class Customer:
         self.target_pos_x, self.target_pos_y = target_pos
         self.cell_size = cell_size
         self.window_height = window_height
+        self.state = state
+        self.color = color
         
         # Rectangleオブジェクトを作成し、バッチに登録
         self.sprite = pyglet.shapes.Rectangle(
@@ -19,7 +21,7 @@ class Customer:
             y=self.window_height - (self.grid_y + 1) * cell_size,
             width=cell_size,
             height=cell_size,
-            color=color,
+            color=self.color,
             batch=batch
         )
 
