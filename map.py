@@ -28,6 +28,17 @@ class Map:
                     self.tiles.append(rect)
                 elif cell == 'W':
                     self.wait_pos.append((x, y))
+                elif cell == 'L':
+                    self.cust_label = pyglet.text.Label(
+                        text=f"来客数: 0",
+                        font_name='Arial',
+                        font_size=16,
+                        x=100, y=pixel_y + 30,
+                        anchor_x='left', anchor_y='top',
+                        color=(255, 255, 255, 255),
+                        batch=self.batch
+                    )
+                    self.tiles.append(self.cust_label)
                 elif cell == 'T':
                     rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
                                                    color=(255, 255, 0), batch=self.batch)

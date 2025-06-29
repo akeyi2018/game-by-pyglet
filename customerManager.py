@@ -30,6 +30,7 @@ class CustomerManager:
         self.max_customers = MAX_CUSTOMERS    # 任意：上限を設定したい場合
 
         self.color = (0, 255, 255)
+        self.customer_count = 0
 
         # 初期顧客
         self.setup_initial_customers()
@@ -103,6 +104,8 @@ class CustomerManager:
         # 顧客の削除処理
         for i, customer in enumerate(self.customers):
             if customer.state == "exited":
+                self.customer_count += 1
+                self.parent.map.cust_label.text = f"来客数:{self.customer_count}"
                 self.log(f"【顧客削除】id: {customer.id}")
                 self.customers.pop(i)
 
