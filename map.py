@@ -13,7 +13,7 @@ class Map:
         self.customer_pos = []
         self.table_pos = []
         self.seat_pos = []
-
+        self.table_image = pyglet.image.load('table.png')
         self.load_map()
 
     def load_map(self):
@@ -40,9 +40,12 @@ class Map:
                     )
                     self.tiles.append(self.cust_label)
                 elif cell == 'T':
-                    rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
-                                                   color=(255, 255, 0), batch=self.batch)
-                    self.tiles.append(rect)
+                    # rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
+                    #                                color=(255, 255, 0), batch=self.batch)
+                    table = pyglet.sprite.Sprite(img=self.table_image,
+                                                 x=pixel_x, y=pixel_y,
+                                                 batch=self.batch)
+                    self.tiles.append(table)
                     self.table_pos.append((x, y))
                 elif cell == 'S':
                     self.seat_pos.append((x,y))

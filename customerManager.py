@@ -1,6 +1,7 @@
 from settings import *
 from customer import Customer
 import time
+import pyglet
 
 class CustomerManager:
     def __init__(self, parent, num_customers=2, log_func=None):
@@ -69,7 +70,7 @@ class CustomerManager:
 
         # 顧客生成(店外)
         state = "outside"
-        customer = Customer(customer_pos, customer_pos, state, self.window_height, self.cell_size, self.color, self.batch)
+        customer = Customer(customer_pos, state, self.window_height, self.cell_size, self.color, self.batch)
         self.customers.append(customer)
         self.log(f"【顧客生成】id: {customer.id} pos: {customer_pos} state: {state}")
 

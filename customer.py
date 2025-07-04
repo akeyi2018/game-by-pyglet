@@ -1,29 +1,39 @@
 import pyglet
+import os
 
 class Customer:
     
     _id_counter = 0  # クラス変数で一意なIDを管理
 
-    def __init__(self, start_pos, target_pos, state, window_height, cell_size, color, batch):
+    def __init__(self, start_pos, state, window_height, cell_size, color, batch):
         self.id = Customer._id_counter  # 各顧客に一意のIDを付与
         Customer._id_counter += 1
 
         self.grid_x, self.grid_y = start_pos
-        self.target_pos_x, self.target_pos_y = target_pos
+        self.target_pos_x, self.target_pos_y = start_pos
         self.cell_size = cell_size
         self.window_height = window_height
         self.state = state
         self.color = color
-        
-        # Rectangleオブジェクトを作成し、バッチに登録
-        self.sprite = pyglet.shapes.Rectangle(
+
+        if os.path.exists('goblin.png'):
+            self.cust_img = pyglet.image.load('goblin.png')
+            self.sprite = pyglet.sprite.Sprite(
+            img=self.cust_img,
             x=self.grid_x * cell_size,
             y=self.window_height - (self.grid_y + 1) * cell_size,
-            width=cell_size,
-            height=cell_size,
-            color=self.color,
             batch=batch
-        )
+            )
+        else:
+        # Rectangleオブジェクトを作成し、バッチに登録
+            self.sprite = pyglet.shapes.Rectangle(
+                x=self.grid_x * cell_size,
+                y=self.window_height - (self.grid_y + 1) * cell_size,
+                width=cell_size,
+                height=cell_size,
+                color=self.color,
+                batch=batch
+            )
 
         self.moving = False
         self.move_duration = 0.2

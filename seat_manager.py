@@ -15,15 +15,12 @@ class SeatManager:
 
         # 顧客リスト（CustomerManagerを参照)
         self.customers = self.parent.customer_manager.customers
-        # print(self.customers)
     
     def update(self, dt):
 
         self.assign_seat()
 
         self.move_to_seat(dt)
-
-        # self.shift_waiting_customers_forward()
 
         self.eating(dt)
 
@@ -73,7 +70,7 @@ class SeatManager:
                     customer.sprite.color = (255,0,0)
                     self.log(f"【出口移動開始】id: {customer.id} Exit pos: {exit_x, exit_y} state: {customer.state}")  
 
-                    # ✅ 座席の解放
+                    # 座席の解放
                     for idx, (cust_obj, seat_i) in enumerate(self.seat_queue):
                         if cust_obj == customer:
                             self.seat_in_use[seat_i] = False
