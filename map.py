@@ -76,3 +76,7 @@ class Map:
     def get_exit_positions(self):
         return [(x, y) for y, row in enumerate(self.map_data)
                 for x, cell in enumerate(row) if cell == 'D']
+    
+    def get_entrance_positions(self):
+        return [(x, y) for y, row in enumerate(self.map_data)
+                for x, cell in enumerate(row) if cell == 'L']

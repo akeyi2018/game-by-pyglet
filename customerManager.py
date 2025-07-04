@@ -13,7 +13,12 @@ class CustomerManager:
         self.batch = self.parent.batch
 
         self.customer_pos_list = parent.map.get_random_customer_positions(num_customers)
+        
+        # 出口の位置
         self.exit_pos_list = parent.map.get_exit_positions()
+
+        # 入口の位置
+        self.entrance_pos = parent.map.get_entrance_positions()
 
         # MAP上の待機場所の座標リスト
         self.wait_pos_list = parent.map.wait_pos
@@ -42,6 +47,12 @@ class CustomerManager:
             self.spawn_customer()
 
     def update(self, dt):
+
+        # 入口まで割り当て
+        self.assign_to_entrance()
+
+        # 入口まで移動
+        self.move_to_entrance(dt)
 
         # 待機場所への割り当て
         self.assign_to_wait_pos()
@@ -74,10 +85,35 @@ class CustomerManager:
         self.customers.append(customer)
         self.log(f"【顧客生成】id: {customer.id} pos: {customer_pos} state: {state}")
 
-    def assign_to_wait_pos(self):
-        # Step 1: W に空きがあれば、outside → moving_to_wait にする
+    def assign_to_entrance(self):
         for customer in self.customers:
             if customer.state == "outside":
+                target = self.entrance_pos[0]
+                customer.set_new_target(*target)
+                customer.state = "moving_to_entrance"
+                self.log(f"【店入口割当】id: {customer.id} pos: {target} \
+                                state: {customer.state}")
+    
+    def move_to_entrance(self, dt):
+        for customer in self.customers:
+            if customer.state == "moving_to_entrance":
+                customer.update(dt, self.parent.map)
+                if not customer.is_moving and customer.reached_final_target:
+                    customer.state = "arrive"
+                
+                    self.log(f"【店到着】id: {customer.id} pos: {customer.grid_x, customer.grid_y} \
+                                state: {customer.state}")
+
+    def assign_to_wait_pos(self):
+        # Step 1: W に空きがあれば、outside → moving_to_wait にする
+        # 入口の座標
+        entrance_x, entrance_y = self.entrance_pos[0]
+
+        closest_customer = None
+        distance = 10000
+        for customer in self.customers:
+            if customer.state == "arrive":
+                # 最も近い人を待機場所へ割り当てる
                 for j, used in enumerate(self.wait_pos_in_use):
                     if not used:
                         self.wait_pos_in_use[j] = True
@@ -86,7 +122,8 @@ class CustomerManager:
                         customer.set_new_target(*target)
                         customer.state = "moving_to_wait"
                         customer.sprite.color = (90,142,71)
-                        self.log(f"【待機場所割当】id: {customer.id} index: W[{j}] pos: {target} state: {customer.state}")
+                        self.log(f"【待機場所割当】id: {customer.id} index: W[{j}] pos: {target} \
+                                state: {customer.state}")
                         break  # 1人だけWに入れる
 
     def move_to_wait_pos(self, dt):
