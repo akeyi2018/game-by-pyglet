@@ -14,6 +14,7 @@ class Map:
         self.table_pos = []
         self.seat_pos = []
         self.table_image = pyglet.image.load('table.png')
+        self.grade_image = pyglet.image.load('table2.jpg')
         self.load_map()
 
     def load_map(self):
@@ -47,6 +48,13 @@ class Map:
                                                  batch=self.batch)
                     self.tiles.append(table)
                     self.table_pos.append((x, y))
+                elif cell == 'G':
+                    # rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
+                    #                                color=(255, 255, 0), batch=self.batch)
+                    table = pyglet.sprite.Sprite(img=self.grade_image,
+                                                 x=pixel_x, y=pixel_y,
+                                                 batch=self.batch)
+                    self.tiles.append(table)
                 elif cell == 'S':
                     self.seat_pos.append((x,y))
 

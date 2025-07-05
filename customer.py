@@ -1,5 +1,6 @@
 import pyglet
 import os
+import random
 
 class Customer:
     
@@ -16,8 +17,11 @@ class Customer:
         self.state = state
         self.color = color
 
-        if os.path.exists('goblin.png'):
-            self.cust_img = pyglet.image.load('goblin.png')
+        image_list = ["goblin.png", "kappa.png"]
+        selected_image = random.choice(image_list)
+
+        if os.path.exists(selected_image):
+            self.cust_img = pyglet.image.load(selected_image)
             self.sprite = pyglet.sprite.Sprite(
             img=self.cust_img,
             x=self.grid_x * cell_size,

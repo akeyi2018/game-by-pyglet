@@ -106,11 +106,6 @@ class CustomerManager:
 
     def assign_to_wait_pos(self):
         # Step 1: W に空きがあれば、outside → moving_to_wait にする
-        # 入口の座標
-        entrance_x, entrance_y = self.entrance_pos[0]
-
-        closest_customer = None
-        distance = 10000
         for customer in self.customers:
             if customer.state == "arrive":
                 # 最も近い人を待機場所へ割り当てる
