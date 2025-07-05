@@ -46,15 +46,10 @@ class SeatManager:
     def move_to_seat(self, dt):
         for customer in self.customers:
             if customer.state == "moving_to_seat":
-                # 待機場所は解放する
-                for idx, (cust_obj, wait_i) in enumerate(self.parent.customer_manager.waiting_queue):
-                    if cust_obj == customer:
-                        self.parent.customer_manager.wait_pos_in_use[wait_i] = False
-                        self.parent.customer_manager.waiting_queue.pop(idx)
-                        self.log(f"【席移動開始】id: {customer.id} W[ {wait_i} ] state: {customer.state}")
+                self.log(f"【席移動開始】id: {customer.id} state: {customer.state}")
 
                 customer.update(dt, self.parent.map)
-                if customer.reached_final_target:
+                if not customer.is_moving and customer.reached_final_target:
                     customer.state = "seated"
                     self.log(f"【着座】id: {customer.id} state: {customer.state}")
 

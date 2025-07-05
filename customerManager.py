@@ -12,11 +12,6 @@ class CustomerManager:
         self.window_height = parent.window_height
         self.batch = self.parent.batch
 
-        self.customer_pos_list = parent.map.get_random_customer_positions(num_customers)
-        
-        # 出口の位置
-        self.exit_pos_list = parent.map.get_exit_positions()
-
         # 入口の位置
         self.entrance_pos = parent.map.get_entrance_positions()
 
