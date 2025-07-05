@@ -18,8 +18,6 @@ class Main:
         self.window_height = len(MAP_DATA) * CELL_SIZE
         self.window = pyglet.window.Window(self.window_width, self.window_height)
         self.batch = pyglet.graphics.Batch()
-        self.keys = key.KeyStateHandler()
-        self.window.push_handlers(self.keys)
 
         # Initialize map
         self.map = Map(self.batch, self.window_height)
