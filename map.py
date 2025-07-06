@@ -13,10 +13,9 @@ class Map:
         self.customer_pos = []
         self.table_pos = []
         self.seat_pos = []
-        self.table_image = pyglet.image.load('table.png')
-        self.grade_image = pyglet.image.load('table2.jpg')
-        self.floor_image = pyglet.image.load('floor_carpet.png')
-        self.kusa = pyglet.image.load('sougen.png')
+        self.table_image = pyglet.image.load('./res/table.png')
+        self.floor_image = pyglet.image.load('./res/floor_carpet.png')
+        self.kusa = pyglet.image.load('./res/sougen.png')
         self.load_map()
 
     def load_map(self):
@@ -25,10 +24,23 @@ class Map:
                 pixel_x = x * self.cell_size
                 pixel_y = self.window_height - (y + 1) * self.cell_size
 
+                # フロア
                 floor = pyglet.sprite.Sprite(img=self.floor_image,
                                                  x=pixel_x, y=pixel_y,
                                                  batch=self.batch)
                 floor.scale = 2.0
+
+                # テーブル
+                table = pyglet.sprite.Sprite(img=self.table_image,
+                                                 x=pixel_x, y=pixel_y,
+                                                 batch=self.batch)
+                table.scale = 2.0
+
+                # 店外（草原）
+                kusa = pyglet.sprite.Sprite(img=self.kusa,
+                                                 x=pixel_x, y=pixel_y,
+                                                 batch=self.batch)
+                kusa.scale = 2.0
 
                 if cell == 'B':
                     rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
@@ -49,31 +61,14 @@ class Map:
                     )
                     self.tiles.append(self.cust_label)
                 elif cell == 'T':
-                    # rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
-                    #                                color=(255, 255, 0), batch=self.batch)
-                    table = pyglet.sprite.Sprite(img=self.table_image,
-                                                 x=pixel_x, y=pixel_y,
-                                                 batch=self.batch)
-                    table.scale = 2.0
                     self.tiles.append(table)
                     self.table_pos.append((x, y))
-                elif cell == 'G':
-                    # rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
-                    #                                color=(255, 255, 0), batch=self.batch)
-                    table = pyglet.sprite.Sprite(img=self.grade_image,
-                                                 x=pixel_x, y=pixel_y,
-                                                 batch=self.batch)
-                    self.tiles.append(table)
                 elif cell == 'S':
                     self.tiles.append(floor)
                     self.seat_pos.append((x,y))
                 elif cell == '.':
                     self.tiles.append(floor)
                 elif cell == 'F':
-                    kusa = pyglet.sprite.Sprite(img=self.kusa,
-                                                 x=pixel_x, y=pixel_y,
-                                                 batch=self.batch)
-                    kusa.scale = 2.0
                     self.tiles.append(kusa)
 
 
@@ -85,8 +80,10 @@ class Map:
 
     def is_walkable(self, x, y):
         if 0 <= y < len(self.map_data) and 0 <= x < len(self.map_data[0]):
-            return self.map_data[y][x] != 'B'
-        return False
+            if self.map_data[y][x] == 'B' or self.map_data[y][x] == 'T':
+                return False
+            else:
+                return True
     
     def get_random_customer_positions(self, num_customers, area_rows=(1, 4)):
         available = []
