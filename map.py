@@ -25,14 +25,16 @@ class Map:
                 pixel_x = x * self.cell_size
                 pixel_y = self.window_height - (y + 1) * self.cell_size
 
+                floor = pyglet.sprite.Sprite(img=self.floor_image,
+                                                 x=pixel_x, y=pixel_y,
+                                                 batch=self.batch)
+                floor.scale = 2.0
+
                 if cell == 'B':
                     rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
                                                    color=(50, 50, 50), batch=self.batch)
                     self.tiles.append(rect)
                 elif cell == 'W':
-                    floor = pyglet.sprite.Sprite(img=self.floor_image,
-                                                 x=pixel_x, y=pixel_y,
-                                                 batch=self.batch)
                     self.tiles.append(floor)
                     self.wait_pos.append((x, y))
                 elif cell == 'L':
@@ -52,6 +54,7 @@ class Map:
                     table = pyglet.sprite.Sprite(img=self.table_image,
                                                  x=pixel_x, y=pixel_y,
                                                  batch=self.batch)
+                    table.scale = 2.0
                     self.tiles.append(table)
                     self.table_pos.append((x, y))
                 elif cell == 'G':
@@ -62,20 +65,15 @@ class Map:
                                                  batch=self.batch)
                     self.tiles.append(table)
                 elif cell == 'S':
-                    floor = pyglet.sprite.Sprite(img=self.floor_image,
-                                                 x=pixel_x, y=pixel_y,
-                                                 batch=self.batch)
                     self.tiles.append(floor)
                     self.seat_pos.append((x,y))
                 elif cell == '.':
-                    floor = pyglet.sprite.Sprite(img=self.floor_image,
-                                                 x=pixel_x, y=pixel_y,
-                                                 batch=self.batch)
                     self.tiles.append(floor)
                 elif cell == 'F':
                     kusa = pyglet.sprite.Sprite(img=self.kusa,
                                                  x=pixel_x, y=pixel_y,
                                                  batch=self.batch)
+                    kusa.scale = 2.0
                     self.tiles.append(kusa)
 
 

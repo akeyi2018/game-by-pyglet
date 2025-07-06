@@ -1,5 +1,5 @@
 # 定数
-CELL_SIZE = 32
+CELL_SIZE = 64
 # 顧客の飲食時間
 STAY_DURATION = 2.5
 # 新規顧客の生成間隔
@@ -23,6 +23,6 @@ MAP_DATA = [
     'B................WB',
     'BBBBBB.....BBBBB.BB',
     'B.................B',
-    'B......VGV........B',
+    'B......STS........B',
     'BBBBBBBBBBBBBBBBBBB',
 ]

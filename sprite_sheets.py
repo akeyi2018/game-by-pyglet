@@ -5,18 +5,18 @@ class SpriteSheet:
         self.image = pyglet.image.load(file_path)
         self.frame_width = self.image.width // frame_cols
         self.frame_height = self.image.height // frame_rows
-        self.frames = []
+        self.animations = {}  # 方向別アニメーション辞書
 
-        # pygletは原点が左下なので、上から順に取得するには逆順にrowループ
-        for row in range(frame_rows):
+        directions = ['up', 'left', 'right', 'down']
+
+        for row, direction in enumerate(directions):
             y = self.image.height - (row + 1) * self.frame_height
+            frames = []
             for col in range(frame_cols):
                 x = col * self.frame_width
                 region = self.image.get_region(x, y, self.frame_width, self.frame_height)
-                self.frames.append(region)
+                frames.append(region)
+            self.animations[direction] = frames
 
-    def get_frames(self):
-        return self.frames
-
-    def get_frame(self, index):
-        return self.frames[index % len(self.frames)]
+    def get_frames(self, direction):
+        return self.animations.get(direction, self.animations['down'])

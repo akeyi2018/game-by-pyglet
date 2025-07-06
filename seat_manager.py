@@ -34,9 +34,14 @@ class SeatManager:
                         self.seat_in_use[j] = True
                         customer.set_new_target(*self.parent.map.seat_pos[j])
                         customer.state = "moving_to_seat"
-                        customer.sprite.color = (231,115,35)
+                        # customer.sprite.color = (231,115,35)
                         self.seat_queue.append((customer, j))
                         self.log(f"【座席割当】id: {customer.id} → seat[{j}]")
+
+                        if j%2 == 0:
+                            customer.face_direction = 'right'
+                        else:
+                            customer.face_direction = 'left'
                         # Wを解放し、詰め処理へ
                         self.parent.customer_manager.wait_pos_in_use[wait_idx] = False
                         self.parent.customer_manager.waiting_queue.remove((customer, wait_idx))
@@ -47,10 +52,10 @@ class SeatManager:
         for customer in self.customers:
             if customer.state == "moving_to_seat":
                 self.log(f"【席移動開始】id: {customer.id} state: {customer.state}")
-
                 customer.update(dt, self.parent.map)
                 if not customer.is_moving and customer.reached_final_target:
                     customer.state = "seated"
+                    customer.face_to(customer.face_direction)
                     self.log(f"【着座】id: {customer.id} state: {customer.state}")
 
     def eating(self, dt):
@@ -62,7 +67,7 @@ class SeatManager:
                     exit_x, exit_y = self.parent.map.exit_pos_list[0]  # 複数あるならランダムでもOK
                     customer.set_new_target(exit_x, exit_y)
                     customer.state = "leaving"
-                    customer.sprite.color = (90,142,71)
+                    # customer.sprite.color = (90,142,71)
                     self.log(f"【出口移動開始】id: {customer.id} Exit pos: {exit_x, exit_y} state: {customer.state}")  
 
                     # 座席の解放

@@ -18,6 +18,7 @@ class Customer:
         self.window_height = window_height
         self.state = state
         self.color = color
+        self.face_direction = None
 
         # image_list = ["goblin.png", "kappa.png"]
         # selected_image = random.choice(image_list)
@@ -27,8 +28,10 @@ class Customer:
         selected_image = random.choice(image_files) if image_files else None
 
         if os.path.exists(selected_image):
-            sheet = SpriteSheet(selected_image)
-            self.frames = sheet.get_frames()
+            self.sheet = SpriteSheet(selected_image)
+            # self.frames = sheet.get_frames()
+            self.direction = 'down'
+            self.frames = self.sheet.get_frames(self.direction)
             self.sprite = pyglet.sprite.Sprite(
             img=self.frames[0],
             x=self.grid_x * cell_size,
@@ -38,7 +41,7 @@ class Customer:
             self.current_frame = 0
             self.elapsed_time = 0
             self.animation_speed = 0.15
-            # self.sprite.scale = scale
+            self.sprite.scale = 2.0
         else:
             # Rectangleオブジェクトを作成し、バッチに登録
             self.sprite = pyglet.shapes.Rectangle(
@@ -59,6 +62,13 @@ class Customer:
         self.stay_timer = 0.0
 
 
+    def update_animation(self, dt):
+        self.elapsed_time += dt
+        if self.elapsed_time >= self.animation_speed:
+            self.elapsed_time = 0
+            self.current_frame = (self.current_frame + 1) % len(self.frames)
+            self.sprite.image = self.frames[self.current_frame]
+
     @property
     def is_moving(self):
         return self.moving
@@ -72,8 +82,29 @@ class Customer:
             new_x * self.cell_size,
             self.window_height - (new_y + 1) * self.cell_size
         )
+
+        dx = new_x - self.grid_x
+        dy = new_y - self.grid_y
+
+        # 移動方向に応じてアニメーション変更
+        if abs(dx) > abs(dy):
+            self.direction = 'right' if dx > 0 else 'left'
+        else:
+            self.direction = 'up' if dy > 0 else 'down'
+
+        self.frames = self.sheet.get_frames(self.direction)
+        self.current_frame = 0
+
         self.move_timer = 0.0
         self.moving = True
+
+    def face_to(self, direction):
+        """明示的に方向を指定して向きを変える"""
+        if direction in ['left', 'right', 'up', 'down']:
+            self.direction = direction
+            self.frames = self.sheet.get_frames(self.direction)
+            self.current_frame = 0
+            self.sprite.image = self.frames[0]
 
     def move_target(self, game_map, dt):
         if self.moving:
