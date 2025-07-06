@@ -111,7 +111,7 @@ class CustomerManager:
                         target = self.wait_pos_list[j]
                         customer.set_new_target(*target)
                         customer.state = "moving_to_wait"
-                        customer.sprite.color = (90,142,71)
+                        # customer.sprite.color = (255,0,0)
                         self.log(f"【待機場所割当】id: {customer.id} index: W[{j}] pos: {target} \
                                 state: {customer.state}")
                         break  # 1人だけWに入れる
@@ -135,6 +135,11 @@ class CustomerManager:
                 self.customer_count += 1
                 self.parent.map.cust_label.text = f"来客数:{self.customer_count}"
                 self.log(f"【顧客削除】id: {customer.id}")
+                
+                # 明示的にスプライトを削除
+                if hasattr(customer, 'sprite') and customer.sprite:
+                    customer.sprite.delete()
+                
                 self.customers.pop(i)
 
 

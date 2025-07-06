@@ -62,7 +62,7 @@ class SeatManager:
                     exit_x, exit_y = self.parent.map.exit_pos_list[0]  # 複数あるならランダムでもOK
                     customer.set_new_target(exit_x, exit_y)
                     customer.state = "leaving"
-                    customer.sprite.color = (255,0,0)
+                    customer.sprite.color = (90,142,71)
                     self.log(f"【出口移動開始】id: {customer.id} Exit pos: {exit_x, exit_y} state: {customer.state}")  
 
                     # 座席の解放

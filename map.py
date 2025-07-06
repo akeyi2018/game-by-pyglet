@@ -15,6 +15,8 @@ class Map:
         self.seat_pos = []
         self.table_image = pyglet.image.load('table.png')
         self.grade_image = pyglet.image.load('table2.jpg')
+        self.floor_image = pyglet.image.load('floor_carpet.png')
+        self.kusa = pyglet.image.load('sougen.png')
         self.load_map()
 
     def load_map(self):
@@ -28,6 +30,10 @@ class Map:
                                                    color=(50, 50, 50), batch=self.batch)
                     self.tiles.append(rect)
                 elif cell == 'W':
+                    floor = pyglet.sprite.Sprite(img=self.floor_image,
+                                                 x=pixel_x, y=pixel_y,
+                                                 batch=self.batch)
+                    self.tiles.append(floor)
                     self.wait_pos.append((x, y))
                 elif cell == 'L':
                     self.cust_label = pyglet.text.Label(
@@ -56,7 +62,22 @@ class Map:
                                                  batch=self.batch)
                     self.tiles.append(table)
                 elif cell == 'S':
+                    floor = pyglet.sprite.Sprite(img=self.floor_image,
+                                                 x=pixel_x, y=pixel_y,
+                                                 batch=self.batch)
+                    self.tiles.append(floor)
                     self.seat_pos.append((x,y))
+                elif cell == '.':
+                    floor = pyglet.sprite.Sprite(img=self.floor_image,
+                                                 x=pixel_x, y=pixel_y,
+                                                 batch=self.batch)
+                    self.tiles.append(floor)
+                elif cell == 'F':
+                    kusa = pyglet.sprite.Sprite(img=self.kusa,
+                                                 x=pixel_x, y=pixel_y,
+                                                 batch=self.batch)
+                    self.tiles.append(kusa)
+
 
         # # 待機ポジションをリバース
         self.wait_pos.reverse()
@@ -74,7 +95,7 @@ class Map:
 
         for y in range(area_rows[0], area_rows[1]):
             for x in range(len(self.map_data[0])):
-                if self.map_data[y][x] == '.':
+                if self.map_data[y][x] == 'F':
                     available.append((x, y))
 
         random.shuffle(available)

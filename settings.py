@@ -7,9 +7,9 @@ SPAWN_TIME = 0.5
 MAX_CUSTOMERS = 30
 MAP_DATA = [
     'BBBBBBBBBBBBBBBBBBB',
-    '...................',
-    '...................',
-    '...................',
+    'FFFFFFFFFFFFFFFFFFF',
+    'FFFFFFFFFFFFFFFFFFF',
+    'FFFFFFFFFFFFFFFFFFF',
     'BBBBBBBBBBBBBBBBDLB',
     'B................WB',
     'B................WB',

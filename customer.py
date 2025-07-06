@@ -1,6 +1,8 @@
 import pyglet
 import os
 import random
+import glob
+from sprite_sheets import SpriteSheet
 
 class Customer:
     
@@ -17,19 +19,28 @@ class Customer:
         self.state = state
         self.color = color
 
-        image_list = ["goblin.png", "kappa.png"]
-        selected_image = random.choice(image_list)
+        # image_list = ["goblin.png", "kappa.png"]
+        # selected_image = random.choice(image_list)
+
+        self.character_folder = "./ref/characters"
+        image_files = glob.glob(os.path.join(self.character_folder, "*.png"))
+        selected_image = random.choice(image_files) if image_files else None
 
         if os.path.exists(selected_image):
-            self.cust_img = pyglet.image.load(selected_image)
+            sheet = SpriteSheet(selected_image)
+            self.frames = sheet.get_frames()
             self.sprite = pyglet.sprite.Sprite(
-            img=self.cust_img,
+            img=self.frames[0],
             x=self.grid_x * cell_size,
             y=self.window_height - (self.grid_y + 1) * cell_size,
             batch=batch
             )
+            self.current_frame = 0
+            self.elapsed_time = 0
+            self.animation_speed = 0.15
+            # self.sprite.scale = scale
         else:
-        # Rectangleオブジェクトを作成し、バッチに登録
+            # Rectangleオブジェクトを作成し、バッチに登録
             self.sprite = pyglet.shapes.Rectangle(
                 x=self.grid_x * cell_size,
                 y=self.window_height - (self.grid_y + 1) * cell_size,
@@ -95,6 +106,14 @@ class Customer:
 
     def update(self, dt, game_map):
         self.move_target(game_map, dt)
+
+        # アニメーション更新（移動 or idle）
+        if hasattr(self, 'frames'):
+            self.elapsed_time += dt
+            if self.elapsed_time >= self.animation_speed:
+                self.elapsed_time = 0
+                self.current_frame = (self.current_frame + 1) % len(self.frames)
+                self.sprite.image = self.frames[self.current_frame]
 
     def set_new_target(self, target_x, target_y):
         self.target_pos_x = target_x
