@@ -30,6 +30,7 @@ class Main:
 
         # Register events
         self.window.event(self.on_draw)
+        self.window.push_handlers(self)
         pyglet.clock.schedule_interval(self.update, 1 / 60.0)
 
     def _create_logger(self):
@@ -45,6 +46,9 @@ class Main:
     def on_draw(self):
         self.window.clear()
         self.batch.draw()
+
+    def on_mouse_press(self,x,y,button, modifiers):
+        self.map.on_mouse_press(x,y,button,modifiers)
 
     def update(self, dt):
         self.customer_manager.update(dt)
