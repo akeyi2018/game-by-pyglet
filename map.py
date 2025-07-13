@@ -4,7 +4,6 @@ from settings import *
 from door import DoorButton
 from pyglet.window import mouse
 
-
 class Map:
     def __init__(self, batch, window_height):
         self.map_data = MAP_DATA
@@ -22,8 +21,6 @@ class Map:
         self.buttons = []
         self.load_map()
         self.open_doors = set()  # ← 開いたドアのグリッド座標を保存
-
-        
 
     def load_map(self):
         for y, row in enumerate(self.map_data):
@@ -96,16 +93,6 @@ class Map:
                 if btn.hit_test(x,y):
                     btn.click()
 
-
-    # def button_clicked(self, x, y, is_open):
-        
-    #     if is_open:
-    #         print(f"【ドア開】({x}, {y})")
-    #         self.open_doors.add((x, y))
-    #     else:
-    #         print(f"【ドア閉】({x}, {y})")
-    #         self.open_doors.discard((x, y))  # 通行不可に戻す
-
     def button_clicked(self, x, y, is_open):
         # yを反転させる
         corrected_y = len(self.map_data) - 1 - y
@@ -114,37 +101,14 @@ class Map:
             self.open_doors.add((x, corrected_y))
         else:
             self.open_doors.discard((x, corrected_y))
-
-
-
-    # def is_walkable(self, x, y):
-    #     if 0 <= y < len(self.map_data) and 0 <= x < len(self.map_data[0]):
-    #         if self.map_data[y][x] == 'B' or self.map_data[y][x] == 'T':
-    #             return False
-    #         else:
-    #             return True
-            
-    # def is_walkable(self, x, y):
-    #     if 0 <= y < len(self.map_data) and 0 <= x < len(self.map_data[0]):
-    #         cell = self.map_data[y][x]
-    #         if cell == 'B' or cell == 'T':
-    #             return False
-    #         elif cell == 'D':
-    #             return (x, y) in self.open_doors  # ← ドアが開いていれば通行可
-    #         else:
-    #             return True
-    #     return False
     
     def is_walkable(self, x, y):
-        # print(f"Walkableチェック: ({x}, {y}) -> ", end="")
         if 0 <= y < len(self.map_data) and 0 <= x < len(self.map_data[0]):
             cell = self.map_data[y][x]
             if cell == 'B' or cell == 'T':
-                # print("✗ 壁またはテーブル")
                 return False
             elif cell == 'D':
                 walkable = (x, y) in self.open_doors
-                # print(f"{'✓ 通行可' if walkable else '✗ 通行不可'} (ドア)")
                 return walkable
             else:
                 # print("✓ 通行可")
