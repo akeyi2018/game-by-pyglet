@@ -87,16 +87,13 @@ class Map:
 
     def on_mouse_press(self, x, y, button, modifiers):
         if button == mouse.LEFT:
-            # print(self.buttons)
             for btn in self.buttons:
-                # print(btn)
                 if btn.hit_test(x,y):
                     btn.click()
 
     def button_clicked(self, x, y, is_open):
         # yを反転させる
         corrected_y = len(self.map_data) - 1 - y
-        # print(f"[ドア {'開' if is_open else '閉'}] Grid座標: ({x}, {corrected_y})")
         if is_open:
             self.open_doors.add((x, corrected_y))
         else:
@@ -135,5 +132,3 @@ class Map:
     def get_entrance_positions(self):
         return [(x, y) for y, row in enumerate(self.map_data)
                 for x, cell in enumerate(row) if cell == 'L']
-    
-
