@@ -26,6 +26,7 @@ class Game:
 
         # スプライト初期位置
         self.character = pyglet.sprite.Sprite(img=self.animations[self.current_animation][self.current_frame])
+        self.character.scale = 2.0
         self.character.x = self.window.width // 2
         self.character.y = self.window.height // 2
 
@@ -33,7 +34,7 @@ class Game:
         pyglet.clock.schedule_interval(self.update, 1/60.0)
 
     def load_sprite_sheet(self):
-        sprite_sheet = pyglet.image.load('chara001.png')  # 3x4のスプライトシート
+        sprite_sheet = pyglet.image.load('./characters/$yuhina001.png')  # 3x4のスプライトシート
         frame_width = sprite_sheet.width // 3
         frame_height = sprite_sheet.height // 4
 
@@ -53,7 +54,7 @@ class Game:
         }
 
     def update(self, dt):
-        speed = 200 * dt
+        speed = 100 * dt
         self.character.x += speed * self.vector_x
         self.character.y += speed * self.vector_y
 
