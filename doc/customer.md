@@ -14,43 +14,29 @@
 
 ---
 
-### インスタンス変数
-- **id**: `int`  
-  顧客ごとに一意のID。
-- **grid_x, grid_y**: `int`  
-  現在位置（グリッド座標）。
-- **target_pos_x, target_pos_y**: `int`  
-  移動の目的地（グリッド座標）。
-- **cell_size**: `int`  
-  1マスの大きさ（ピクセル単位）。
-- **window_height**: `int`  
-  画面の高さ（描画位置計算用）。
-- **state**: `str`  
-  顧客の状態（例: `"outside"`, `"waiting"`, `"exited"`）。
-- **color**: `tuple(int, int, int)`  
-  キャラクターの色情報（RGB）。
-- **face_direction**: `str` | `None`  
-  顔の向き（`"left"`, `"right"`, `"up"`, `"down"`）。
-- **sprite**: `pyglet.sprite.Sprite` or `pyglet.shapes.Rectangle`  
-  キャラクターの描画オブジェクト。
-- **frames**: `list[pyglet.image.AbstractImage]`  
-  アニメーション用の画像リスト。
-- **current_frame**: `int`  
-  現在のフレーム番号。
-- **elapsed_time**: `float`  
-  アニメーション用の経過時間。
-- **animation_speed**: `float`  
-  アニメーション更新間隔（秒）。
-- **moving**: `bool`  
-  移動中フラグ。
-- **move_duration**: `float`  
-  1歩の移動にかかる時間。
-- **move_timer**: `float`  
-  移動経過時間。
-- **start_pixel, dest_pixel**: `(float, float)`  
-  移動の始点・終点のピクセル座標。
-- **stay_timer**: `float`  
-  店内滞在時間（退店処理用）。
+| 変数名                            | 型                                              | 説明                                            |
+| ------------------------------ | ---------------------------------------------- | --------------------------------------------- |
+| `_id_counter`                  | int (class)                                    | 顧客IDのカウンタ（クラス変数、一意なID管理）                      |
+| `id`                           | int                                            | 顧客固有ID                                        |
+| `grid_x`, `grid_y`             | int                                            | グリッド上の現在座標                                    |
+| `target_pos_x`, `target_pos_y` | int                                            | 移動目標座標                                        |
+| `cell_size`                    | int                                            | 1マスのピクセルサイズ                                   |
+| `window_height`                | int                                            | ウィンドウの高さ（描画座標変換用）                             |
+| `state`                        | str                                            | 顧客の状態（spawned / moving / waiting / seated など） |
+| `color`                        | tuple                                          | 顔色または矩形色 (R,G,B)                              |
+| `face_direction`               | str                                            | 向き（'up', 'down', 'left', 'right'）             |
+| `sheet`                        | SpriteSheet                                    | アニメーション用スプライトシート                              |
+| `frames`                       | list                                           | 現在方向のアニメーションフレームリスト                           |
+| `sprite`                       | pyglet.sprite.Sprite / pyglet.shapes.Rectangle | 描画用スプライト                                      |
+| `current_frame`                | int                                            | 現在のアニメーションフレーム番号                              |
+| `elapsed_time`                 | float                                          | アニメーション経過時間                                   |
+| `animation_speed`              | float                                          | アニメーション切替速度                                   |
+| `moving`                       | bool                                           | 移動中かどうか                                       |
+| `move_duration`                | float                                          | 移動完了までの時間                                     |
+| `move_timer`                   | float                                          | 移動時間計測用タイマー                                   |
+| `start_pixel`                  | tuple                                          | 移動開始時のピクセル座標                                  |
+| `dest_pixel`                   | tuple                                          | 移動終了時のピクセル座標                                  |
+| `stay_timer`                   | float                                          | 着席時間計測用（退店判定）                                 |
 
 ---
 

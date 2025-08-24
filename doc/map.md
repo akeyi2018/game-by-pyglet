@@ -13,47 +13,24 @@
 
 ---
 
-## 管理データ
-
-* **map\_data**
-
-  * 店舗マップ情報 (`MAP_DATA` を参照)
-
-* **cell\_size**
-
-  * マス目のサイズ
-
-* **tiles**
-
-  * マップ上に描画される全スプライト・シェイプのリスト
-
-* **wait\_pos**
-
-  * 顧客待機位置（`'W'`セルから取得）
-
-* **customer\_pos**
-
-  * （未使用？今後顧客用に使う可能性あり）
-
-* **table\_pos**
-
-  * テーブル位置リスト（`'T'`セルから取得）
-
-* **seat\_pos**
-
-  * 座席位置リスト（`'S'`セルから取得）
-
-* **buttons**
-
-  * ドア操作ボタンリスト（`'D'`セルから生成）
-
-* **open\_doors**
-
-  * 開いているドアの座標セット
-
-* **exit\_pos\_list**
-
-  * 退店出口位置（`'O'`セルから取得）
+| 変数名             | 型                     | 説明                          |
+| --------------- | --------------------- | --------------------------- |
+| `map_data`      | list\[list]           | MAP\_DATA（マップ文字列）           |
+| `cell_size`     | int                   | 1マスのピクセルサイズ                 |
+| `batch`         | pyglet.graphics.Batch | 描画バッチ                       |
+| `window_height` | int                   | ウィンドウ高さ                     |
+| `tiles`         | list                  | スプライト / 矩形 / ラベルなどの描画オブジェクト |
+| `wait_pos`      | list\[tuple]          | 待機ポジションのグリッド座標リスト           |
+| `customer_pos`  | list\[tuple]          | 顧客生成可能位置リスト                 |
+| `table_pos`     | list\[tuple]          | テーブル座標リスト                   |
+| `seat_pos`      | list\[tuple]          | 座席座標リスト                     |
+| `table_image`   | pyglet.image.Image    | テーブル画像                      |
+| `floor_image`   | pyglet.image.Image    | フロア画像                       |
+| `kusa`          | pyglet.image.Image    | 草原画像（店外）                    |
+| `buttons`       | list                  | DoorButtonオブジェクトリスト         |
+| `open_doors`    | set                   | 開いているドアの座標セット               |
+| `cust_label`    | pyglet.text.Label     | 来客数表示ラベル                    |
+| `exit_pos_list` | list\[tuple]          | 退店位置の座標リスト                  |
 
 ---
 

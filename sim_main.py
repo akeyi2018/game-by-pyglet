@@ -66,7 +66,7 @@ class Main():
 
     def update(self, dt):
         self.customer_manager.update(dt)
-        self.seat_manager.update(dt)      # 座席までの移動処理
+        self.seat_manager.update(dt)      
 
 if __name__ == '__main__':
     game = Main()
