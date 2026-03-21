@@ -68,6 +68,18 @@ class Map:
                         batch=self.batch
                     )
                     self.tiles.append(self.cust_label)
+                elif cell == 'M':
+                    # 顧客の込み具合を表示するラベル
+                    self.crowd_label = pyglet.text.Label(
+                        text=f"混雑度: 0%",
+                        font_name='Arial',
+                        font_size=16,
+                        x=300, y=pixel_y + 30,
+                        anchor_x='left', anchor_y='top',
+                        color=(255, 255, 255, 255),
+                        batch=self.batch
+                    )
+                    self.tiles.append(self.crowd_label)
                 elif cell == 'T':
                     self.tiles.append(table)
                     self.table_pos.append((x, y))
@@ -79,8 +91,7 @@ class Map:
                 elif cell == 'F':
                     self.tiles.append(kusa)
 
-
-        # # 待機ポジションをリバース
+        # 待機ポジションをリバース
         self.wait_pos.reverse()
         # 退店位置
         self.exit_pos_list = self.get_exit_positions()

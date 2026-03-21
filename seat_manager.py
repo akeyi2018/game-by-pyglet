@@ -26,6 +26,9 @@ class SeatManager:
 
         self.move_to_exit(dt)
 
+        # 混雑度ラベルの更新
+        self.update_crowd_label()
+
     def assign_seat(self):
         for customer, wait_idx in self.parent.customer_manager.waiting_queue:
             if customer.state == "waiting":
@@ -85,3 +88,12 @@ class SeatManager:
                     customer.state = "exited"
                     self.log(f"【退店】id: {customer.id} state: {customer.state}")
 
+    # 座席の占用率を取得する関数
+    def get_seat_occupancy(self):
+        return sum(self.seat_in_use) / len(self.seat_in_use) if self.seat_in_use else 0
+    
+    # 顧客の込み具合を表示するラベルの更新
+    def update_crowd_label(self):
+        waiting_occupancy = self.parent.customer_manager.get_waiting_occupancy()
+        seat_occupancy = self.get_seat_occupancy()
+        self.parent.map.crowd_label.text = f"混雑度: {int((waiting_occupancy + seat_occupancy) / 2 * 100)}%"

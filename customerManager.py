@@ -4,7 +4,7 @@ import time
 import pyglet
 
 class CustomerManager:
-    def __init__(self, parent, num_customers=2, log_func=None):
+    def __init__(self, parent, num_customers=10, log_func=None):
         self.parent = parent
         self.log = log_func if log_func else lambda msg: None  # ログがなければ無効化
 
@@ -142,6 +142,9 @@ class CustomerManager:
                 
                 self.customers.pop(i)
 
+    # 待機場所がどのぐらい占用されているかを取得する
+    def get_waiting_occupancy(self):
+        return sum(self.wait_pos_in_use) / len(self.wait_pos_in_use) if self.wait_pos_in_use else 0
 
     def shift_waiting_customers_forward(self):
         # 待機列を wait_i 昇順でチェック
