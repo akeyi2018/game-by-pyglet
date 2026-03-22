@@ -79,7 +79,6 @@ class Map:
                         color=(255, 255, 255, 255),
                         batch=self.batch
                     )
-                    self.tiles.append(self.crowd_label)
                 elif cell == 'T':
                     self.tiles.append(table)
                     self.table_pos.append((x, y))

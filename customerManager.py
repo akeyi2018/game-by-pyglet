@@ -3,6 +3,7 @@ from customer import Customer
 import time
 import pyglet
 
+# 顧客管理クラス
 class CustomerManager:
     def __init__(self, parent, num_customers=10, log_func=None):
         self.parent = parent
