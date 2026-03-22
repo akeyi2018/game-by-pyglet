@@ -19,6 +19,7 @@ class Customer:
         self.state = state
         self.color = color
         self.face_direction = None
+        self._sprite_deleted = False  # スプライト削除フラグ
 
         # image_list = ["goblin.png", "kappa.png"]
         # selected_image = random.choice(image_list)
@@ -60,6 +61,25 @@ class Customer:
 
         # 退店処理
         self.stay_timer = 0.0
+
+    
+    def safe_delete_sprite(self):
+        """スプライトを安全に一度だけ削除する"""
+        if self._sprite_deleted:
+            return
+        try:
+            if getattr(self, 'sprite', None):
+                # _vertex_list が None のときに delete() を呼ぶとエラーになるので防御
+                if getattr(self.sprite, '_vertex_list', None) is not None:
+                    self.sprite.delete()
+                # 参照を切って GC を促す
+                self.sprite = None
+            self._sprite_deleted = True
+        except Exception as e:
+            # ここでログだけに留め、クラッシュを回避
+            from loguru import logger
+            logger.warning(f"[sprite safe delete] id:{getattr(self, 'id', '?')} err:{e}")
+            self._sprite_deleted = True
 
 
     def update_animation(self, dt):
