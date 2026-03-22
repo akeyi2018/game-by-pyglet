@@ -43,16 +43,12 @@ class SeatManager:
             if customer.state == "waiting_for_seat":
                 for seat_idx, seat in enumerate(self.seat_area.seats):
                     if seat["in_use"] == False:
-                        # 座席を占有状態にする
-                        # self.seat_area.seats[seat_idx]["in_use"] = True
                         self.seat_area.assign(seat_idx, customer.id)  # 顧客IDを座席に紐づけて占有状態にする
                         # 顧客が移動するターゲットを座席に設定
                         target = self.seat_area.seats[seat_idx]["grid"]
                         customer.set_new_target(*target)
                         customer.state = "moving_to_seat"
                         customer.face_direction = self.seat_area.seats[seat_idx]["facing"]
-                        # self.seat_area.seats[seat_idx]["customer_id"] = customer.id  # 顧客IDを座席に紐づけ
-                        # self.seat_queue.append((customer, seat_idx))
                         logger.info(f"【座席割当】id:{customer.id} → seat[{seat_idx}] pos:{target} facing:{customer.face_direction}")
                         
                         # 待機場所の占有状態を解放

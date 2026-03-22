@@ -12,14 +12,14 @@ class CustomerManager:
         self.batch = self.parent.batch
 
         # --- 待機場所のモデル（シンプル版） ---
-        # WaitArea は spots = [{"grid": (x,y), "customer_id": None}, ...] を持つだけ
-        # self.wait_area = WaitArea(self.parent.map.wait_pos, order='bottom_to_top')  # 並び順は bottom_to_top を指定
+        self.wait_pos_list = parent.map.wait_pos
+        # self.wait_area = WaitArea(self.parent.map.wait_pos) 
 
         # 入口の位置
         self.entrance_pos = parent.map.get_entrance_positions()
 
         # ☆ 旧: 並行配列ベースの待機管理 は廃止
-        self.wait_pos_list = parent.map.wait_pos
+        # self.wait_pos_list = parent.map.wait_pos
         self.waiting_queue = []
         self.wait_pos_in_use = [False] * len(self.wait_pos_list)
 
@@ -93,7 +93,7 @@ class CustomerManager:
 
     # 待機場所へ割り当て（シンプル版 WaitArea に合わせる）
     def assign_to_wait_pos(self):
-        for customer in self.customers:
+         for customer in self.customers:
             if customer.state == "arrive":
                 # 最も近い顧客を待機場所に割り当てる
                 for j, used in enumerate(self.wait_pos_in_use):
@@ -108,15 +108,6 @@ class CustomerManager:
                         customer.state = "moving_to_wait"
                         logger.info(f"【待機場所割当】id:{customer.id} W[{j}] pos:{target} state:{customer.state}")
                         break
-                # # WaitArea に割当（空きがなければ None）
-                # idx = self.wait_area.assign(customer.id)
-                # if idx is not None:
-                #     target = self.wait_area.get_grid(idx)
-                #     customer.set_new_target(*target)
-                #     customer.state = "moving_to_wait"
-                #     logger.info(f"【待機場所割当】id:{customer.id} W[{idx}] pos:{target} state:{customer.state}")
-                #     # 1フレームに1人だけ詰めたい設計なら break
-                #     break
 
     # 待機場所へ移動（到着したら waiting / waiting_for_top へ遷移）
     def move_to_wait_pos(self, dt):
@@ -177,4 +168,3 @@ class CustomerManager:
                         customer.state = "moving_to_wait"
                         logger.info(f"【詰め移動】id: {customer.id} from W[{current_i}] → W[{i}]")
                         break  # 1人だけ詰める
-    
