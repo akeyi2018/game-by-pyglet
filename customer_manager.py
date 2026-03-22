@@ -53,6 +53,8 @@ class CustomerManager:
         self.move_to_wait_pos(dt)
         # 退店顧客の削除
         self.delete_customer()
+        # 待機場所の込み具合ラベル表示の更新
+        self.update_waiting_occupancy_label()
         # スポーン
         self.spawn_timer += dt
         if self.spawn_timer >= self.spawn_interval:
@@ -149,10 +151,14 @@ class CustomerManager:
 
     # （任意）待機占有率：WaitArea が超シンプル構成なのでここで計算しても OK
     def get_waiting_occupancy(self):
-        if not self.wait_area.spots:
+        if not self.wait_pos_in_use:
             return 0.0
-        used = sum(1 for s in self.wait_area.spots if s["customer_id"] is not None)
-        return used / len(self.wait_area.spots)
+        used = sum(1 for used in self.wait_pos_in_use if used)
+        return used / len(self.wait_pos_in_use)
+
+    def update_waiting_occupancy_label(self):
+        occupancy = self.get_waiting_occupancy()
+        self.parent.map.wait_label.text = f"待機占有率:{occupancy:.0%}"
     
     def shift_waiting_customers_forward(self):
         # 待機列を wait_i 昇順でチェック

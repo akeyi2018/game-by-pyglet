@@ -74,11 +74,28 @@ class Map:
                         text=f"混雑度: 0%",
                         font_name='Arial',
                         font_size=16,
-                        x=300, y=pixel_y + 30,
+                        x=pixel_x, y=pixel_y + 30,
                         anchor_x='left', anchor_y='top',
                         color=(255, 255, 255, 255),
                         batch=self.batch
                     )
+                    rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
+                                                   color=(50, 50, 50), batch=self.batch)
+                    self.tiles.append(rect)
+                elif cell == 'N':
+                    # 待機場所の込み具合を表示するラベル
+                    self.wait_label = pyglet.text.Label(
+                        text=f"待機数: 0",
+                        font_name='Arial',
+                        font_size=16,
+                        x=pixel_x, y=pixel_y + 30,
+                        anchor_x='left', anchor_y='top',
+                        color=(255, 255, 255, 255),
+                        batch=self.batch
+                    )
+                    rect = pyglet.shapes.Rectangle(pixel_x, pixel_y, self.cell_size, self.cell_size,
+                                                   color=(50, 50, 50), batch=self.batch)
+                    self.tiles.append(rect)
                 elif cell == 'T':
                     self.tiles.append(table)
                     self.table_pos.append((x, y))
