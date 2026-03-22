@@ -81,6 +81,7 @@ class CustomerManager:
         self.customers.append(customer)
         self.log(f"【顧客生成】id: {customer.id} pos: {customer_pos} state: {state}")
 
+    # 入口に顧客を割り当てる関数
     def assign_to_entrance(self):
         for customer in self.customers:
             if customer.state == "outside":
@@ -90,6 +91,7 @@ class CustomerManager:
                 self.log(f"【店入口割当】id: {customer.id} pos: {target} \
                                 state: {customer.state}")
     
+    # 入口に顧客を移動させる関数
     def move_to_entrance(self, dt):
         for customer in self.customers:
             if customer.state == "moving_to_entrance":

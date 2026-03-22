@@ -5,16 +5,12 @@ from map import Map
 from customerManager import CustomerManager
 from seat_manager import SeatManager
 import time
+import loguru
 
 class Main():
     def __init__(self, title='SIM CAFE'):
         
-        self.log_file = open("customer_lifecycle.log", "w", encoding="utf-8")
-        self.start_time = time.time()
-
-        # ログ関数を作って渡す
-        self.log = self._create_logger()
-
+        # windowの初期化
         self.window_width = len(MAP_DATA[0]) * CELL_SIZE
         self.window_height = len(MAP_DATA) * CELL_SIZE
         self.window = pyglet.window.Window(
@@ -23,29 +19,19 @@ class Main():
         self.batch = pyglet.graphics.Batch()
 
         # Initialize map
-        self.map = Map(self.batch, self.window_height)
+        self.map = Map(self.batch)
 
         # Initialize customer
-        self.customer_manager = CustomerManager(self, log_func=self.log)
+        self.customer_manager = CustomerManager(self)
 
         # seat manager
-        self.seat_manager = SeatManager(self, log_func=self.log)
+        self.seat_manager = SeatManager(self)
 
         # Register events
         self.window.event(self.on_draw)
         self.window.push_handlers(self)
 
         pyglet.clock.schedule_interval(self.update, 1 / 60.0)
-
-    def _create_logger(self):
-        def log(message: str):
-            timestamp = round(time.time() - self.start_time, 2)
-            self.log_file.write(f"[{timestamp}] {message}\n")
-            self.log_file.flush()
-        return log
-
-    def close(self):
-        self.log_file.close()
 
     def on_draw(self):
         self.window.clear()
@@ -69,5 +55,7 @@ class Main():
         self.seat_manager.update(dt)      
 
 if __name__ == '__main__':
+    # ログの初期化
+    loguru.logger.add("customer_lifecycle.log", format="{time} {message}", level="INFO")
     game = Main()
     pyglet.app.run()

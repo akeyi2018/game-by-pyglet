@@ -5,11 +5,11 @@ from door import DoorButton
 from pyglet.window import mouse
 
 class Map:
-    def __init__(self, batch, window_height):
+    def __init__(self, batch):
         self.map_data = MAP_DATA
         self.cell_size = CELL_SIZE
         self.batch = batch
-        self.window_height = window_height
+        self.window_height = len(self.map_data) * self.cell_size
         self.tiles = []
         self.wait_pos = []
         self.customer_pos = []

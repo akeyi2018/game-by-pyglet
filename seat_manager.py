@@ -1,5 +1,6 @@
 from settings import *
 
+# 座席管理クラス
 class SeatManager:
 
     def __init__(self, parent, log_func=None):
