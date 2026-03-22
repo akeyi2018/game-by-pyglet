@@ -2,7 +2,7 @@ import pyglet
 from pyglet.window import key
 from settings import *
 from map import Map
-from customerManager import CustomerManager
+from customer_manager import CustomerManager
 from seat_manager import SeatManager
 import time
 import loguru
@@ -56,6 +56,12 @@ class Main():
 
 if __name__ == '__main__':
     # ログの初期化
+    # ログファイルに出力する設定（例: customer_lifecycle.log）
     loguru.logger.add("customer_lifecycle.log", format="{time} {message}", level="INFO")
+    # customer_lifecycle.logの中身をクリアする
+    with open("customer_lifecycle.log", "w") as log_file:
+        log_file.write("")  # 空文字を書き込んでファイルをクリア
+    # ログをコンソールに出力しないようにする
+    loguru.logger.remove(0)
     game = Main()
     pyglet.app.run()
