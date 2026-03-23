@@ -2,24 +2,23 @@ from settings import *
 from customer import Customer
 from loguru import logger
 from wait_model import WaitArea
+import pyglet
 
 # 顧客管理クラス
 class CustomerManager:
-    def __init__(self, parent, num_customers=10):
+    def __init__(self, parent, num_customers=8):
         self.parent = parent
         self.cell_size = CELL_SIZE
         self.window_height = parent.window_height
         self.batch = self.parent.batch
 
-        # --- 待機場所のモデル（シンプル版） ---
+        # --- 待機場所 ---
         self.wait_pos_list = parent.map.wait_pos
-        # self.wait_area = WaitArea(self.parent.map.wait_pos) 
 
         # 入口の位置
         self.entrance_pos = parent.map.get_entrance_positions()
 
-        # ☆ 旧: 並行配列ベースの待機管理 は廃止
-        # self.wait_pos_list = parent.map.wait_pos
+        # 並行配列ベースの待機管理
         self.waiting_queue = []
         self.wait_pos_in_use = [False] * len(self.wait_pos_list)
 
@@ -95,7 +94,7 @@ class CustomerManager:
 
     # 待機場所へ割り当て（シンプル版 WaitArea に合わせる）
     def assign_to_wait_pos(self):
-         for customer in self.customers:
+        for customer in self.customers:
             if customer.state == "arrive":
                 # 最も近い顧客を待機場所に割り当てる
                 for j, used in enumerate(self.wait_pos_in_use):
@@ -148,6 +147,10 @@ class CustomerManager:
                 # リストから取り除く
                 self.customers.pop(i)
 
+                # 来客数でシミュレーション終了
+                if self.customer_count >= END_NUM_CUSTOMER:
+                    logger.info(f"来客数が{END_NUM_CUSTOMER}人を超えました。シミュレーションを終了します。")
+                    pyglet.app.exit()
 
     # （任意）待機占有率：WaitArea が超シンプル構成なのでここで計算しても OK
     def get_waiting_occupancy(self):

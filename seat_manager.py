@@ -49,7 +49,7 @@ class SeatManager:
                         customer.set_new_target(*target)
                         customer.state = "moving_to_seat"
                         customer.face_direction = self.seat_area.seats[seat_idx]["facing"]
-                        logger.info(f"【座席割当】id:{customer.id} → seat[{seat_idx}] pos:{target} facing:{customer.face_direction}")
+                        logger.info(f"【座席割当】id:{customer.id} → seat[{seat_idx}] pos:{target} state:{customer.state}")
                         
                         # 待機場所の占有状態を解放
                         self.customer_manager.wait_pos_in_use[wait_idx] = False
@@ -63,7 +63,6 @@ class SeatManager:
     def move_to_seat(self, dt):
         for customer in self.customers:
             if customer.state == "moving_to_seat":
-                logger.info(f"【席移動開始】id: {customer.id} state: {customer.state}")
                 customer.update(dt, self.parent.map)
                 if not customer.is_moving and customer.reached_final_target:
                     customer.state = "seated"
