@@ -1,12 +1,12 @@
 from settings import *
 from customer import Customer
 from loguru import logger
-from wait_model import WaitArea
 import pyglet
+from wait_model import WaitAreas
 
 # 顧客管理クラス
 class CustomerManager:
-    def __init__(self, parent, num_customers=8):
+    def __init__(self, parent, num_customers=10):
         self.parent = parent
         self.cell_size = CELL_SIZE
         self.window_height = parent.window_height
@@ -18,9 +18,8 @@ class CustomerManager:
         # 入口の位置
         self.entrance_pos = parent.map.get_entrance_positions()
 
-        # 並行配列ベースの待機管理
-        self.waiting_queue = []
-        self.wait_pos_in_use = [False] * len(self.wait_pos_list)
+        # 新手法
+        self.wait_area = WaitAreas(self.wait_pos_list)
 
         # 顧客本体
         self.customers = []
@@ -96,23 +95,11 @@ class CustomerManager:
     def assign_to_wait_pos(self):
         for customer in self.customers:
             if customer.state == "arrive":
-                # 最も近い顧客を待機場所に割り当てる
-                for j, used in enumerate(self.wait_pos_in_use):
-                    if not used:
-                        # 待機場所用キューと顧客を紐づける
-                        self.waiting_queue.append((customer, j))
-                        # 待機場所を占有状態にする
-                        self.wait_pos_in_use[j] = True
-                        # 顧客が移動するターゲットを待機場所に設定
-                        target = self.wait_pos_list[j]
-                        customer.set_new_target(*target)
-                        customer.state = "moving_to_wait"
-                        logger.info(f"【待機場所割当】id:{customer.id} W[{j}] pos:{target} state:{customer.state}")
-                        break
+                self.wait_area.assign_customer(customer)
 
     # 待機場所へ移動（到着したら waiting / waiting_for_top へ遷移）
     def move_to_wait_pos(self, dt):
-        for customer, wait_idx in self.waiting_queue:
+        for customer, wait_idx in self.wait_area.wait_buffer:
             if customer.state == "moving_to_wait":
                 customer.update(dt, self.parent.map)
                 if not customer.is_moving and customer.reached_final_target:
@@ -154,26 +141,11 @@ class CustomerManager:
 
     # （任意）待機占有率：WaitArea が超シンプル構成なのでここで計算しても OK
     def get_waiting_occupancy(self):
-        if not self.wait_pos_in_use:
+        if not self.wait_area.use_lists:
             return 0.0
-        used = sum(1 for used in self.wait_pos_in_use if used)
-        return used / len(self.wait_pos_in_use)
+        used = sum(1 for used in self.wait_area.use_lists if used)
+        return used / len(self.wait_area.use_lists)
 
     def update_waiting_occupancy_label(self):
         occupancy = self.get_waiting_occupancy()
         self.parent.map.wait_label.text = f"待機占有率:{occupancy:.0%}"
-    
-    def shift_waiting_customers_forward(self):
-        # 待機列を wait_i 昇順でチェック
-        for i in range(len(self.wait_pos_in_use)):
-            if not self.wait_pos_in_use[i]:
-                # 後ろの顧客を詰める
-                for idx, (customer, current_i) in enumerate(self.waiting_queue):
-                    if current_i > i:
-                        self.waiting_queue[idx] = (customer, i)
-                        self.wait_pos_in_use[current_i] = False
-                        self.wait_pos_in_use[i] = True
-                        customer.set_new_target(*self.wait_pos_list[i])
-                        customer.state = "moving_to_wait"
-                        logger.info(f"【詰め移動】id: {customer.id} from W[{current_i}] → W[{i}]")
-                        break  # 1人だけ詰める

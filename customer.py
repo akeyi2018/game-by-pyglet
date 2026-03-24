@@ -21,9 +21,6 @@ class Customer:
         self.face_direction = None
         self._sprite_deleted = False  # スプライト削除フラグ
 
-        # image_list = ["goblin.png", "kappa.png"]
-        # selected_image = random.choice(image_list)
-
         self.character_folder = "./ref/characters"
         image_files = glob.glob(os.path.join(self.character_folder, "*.png"))
         selected_image = random.choice(image_files) if image_files else None

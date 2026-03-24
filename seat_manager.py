@@ -16,9 +16,10 @@ class SeatManager:
         self.seat_area = SeatArea(self.seat_positions)
 
         self.customer_manager = self.parent.customer_manager  # 顧客管理クラスへの参照
-
         # 顧客リストと顧客管理の参照
         self.customers = self.customer_manager.customers
+        # 待機場所クラスへの参照
+        self.wait_area = self.customer_manager.wait_area
 
     # 座席の割当、移動、飲食時間のカウント、退店処理を行うupdate関数
     def update(self, dt):
@@ -39,7 +40,7 @@ class SeatManager:
 
     # 待機中の顧客に空いている座席を割り当てる関数
     def assign_seat(self):
-        for customer, wait_idx in self.customer_manager.waiting_queue:
+        for customer, wait_idx in self.wait_area.wait_buffer:
             if customer.state == "waiting_for_seat":
                 for seat_idx, seat in enumerate(self.seat_area.seats):
                     if seat["in_use"] == False:
@@ -50,13 +51,10 @@ class SeatManager:
                         customer.state = "moving_to_seat"
                         customer.face_direction = self.seat_area.seats[seat_idx]["facing"]
                         logger.info(f"【座席割当】id:{customer.id} → seat[{seat_idx}] pos:{target} state:{customer.state}")
-                        
                         # 待機場所の占有状態を解放
-                        self.customer_manager.wait_pos_in_use[wait_idx] = False
-                        # 待機キューからこの顧客を削除
-                        self.customer_manager.waiting_queue.remove((customer, wait_idx))
+                        self.wait_area.release(wait_idx)
                         # 待機顧客を詰める（後ろの顧客を前に1人だけ詰める）
-                        self.customer_manager.shift_waiting_customers_forward()
+                        self.wait_area.shift_waiting_customers_forward()
                         return
 
     # 顧客を座席に移動させる関数
