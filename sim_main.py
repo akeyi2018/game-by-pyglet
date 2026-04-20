@@ -18,6 +18,9 @@ class Main():
             self.window_height, title, resizable=True)
         self.batch = pyglet.graphics.Batch()
 
+        # ポーズ状態を管理するフラグ
+        self.is_paused = False
+
         # Initialize map
         self.map = Map(self.batch)
 
@@ -28,8 +31,8 @@ class Main():
         self.seat_manager = SeatManager(self)
 
         # Register events
-        self.window.event(self.on_draw)
-        self.window.push_handlers(self)
+        # self.window.event(self.on_draw)
+        self.window.push_handlers(self.on_draw, self.on_mouse_press, self.on_key_press)
 
         pyglet.clock.schedule_interval(self.update, 1 / 60.0)
 
@@ -49,8 +52,14 @@ class Main():
             self.window.close()
         elif symbol == key.N:
             print("WindowContext: Nキーで新しいウィンドウ作成要求")
+        elif symbol == key.P:
+            self.is_paused = not self.is_paused
+            state = "一時停止" if self.is_paused else "再開"
+            print(f"Game {state}")
 
     def update(self, dt):
+        if self.is_paused:
+            return  # ゲームが一時停止中は更新処理をスキップ
         self.customer_manager.update(dt)
         self.seat_manager.update(dt)      
 

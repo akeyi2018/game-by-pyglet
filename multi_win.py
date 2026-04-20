@@ -47,7 +47,10 @@ class WindowContext:
 class WindowManager:
     def __init__(self):
         self.contexts = []
-        self.create_new_window(400, 300, "Main Window")
+        self.create_main_window()
+
+    def create_main_window(self):
+        self.contexts.append(WindowContext(400, 400, "Main Window", manager=self))
 
     def create_new_window(self, w=300, h=200, title="Sub Window"):
         context = WindowContext(w, h, title, manager=self)
