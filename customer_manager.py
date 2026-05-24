@@ -52,8 +52,9 @@ class CustomerManager(EventDispatcher):
         self.assign_to_wait_pos()
         # 待機場所へ移動
         self.move_to_wait_pos(dt)
+
         # 退店顧客の削除
-        self.delete_customer()
+        # self.delete_customer() # 退店処理は SeatManager の update 内で行い、削除は on_delete_customer ハンドラで行うように変更
         # 待機場所の込み具合ラベル表示の更新
         self.update_waiting_occupancy_label()
         # スポーン
@@ -115,35 +116,67 @@ class CustomerManager(EventDispatcher):
                         f"【待機場所到着】id:{customer.id} W[{wait_idx}] pos:{(customer.grid_x, customer.grid_y)} state:{customer.state}"
                     )
 
-    def delete_customer(self):
-        # 退店済みの顧客を削除（来客数ラベル更新）
-        # ※ ループ中削除の安全のため enumerate の結果を list 化
-        for i, customer in list(enumerate(self.customers)):
-            if customer.state == "exited":
-                self.customer_count += 1
-                self.parent.map.cust_label.text = f"来客数:{self.customer_count}"
-                logger.info(f"【顧客削除】id:{customer.id}")
+    def on_delete_customer(self, customer):
+        # SeatManager からの顧客削除イベントを受け取るハンドラ
+        self.delete_customer(customer)
+
+
+    # def delete_customer(self):
+    #     # 退店済みの顧客を削除（来客数ラベル更新）
+    #     # ※ ループ中削除の安全のため enumerate の結果を list 化
+    #     for i, customer in list(enumerate(self.customers)):
+    #         if customer.state == "exited":
+    #             self.customer_count += 1
+    #             self.parent.map.cust_label.text = f"来客数:{self.customer_count}"
+    #             logger.info(f"【顧客削除】id:{customer.id}")
                
-                # 安全削除（必ず safe_delete_sprite を通す）
-                if hasattr(customer, 'safe_delete_sprite'):
-                    customer.safe_delete_sprite()
-                else:
-                    # フラグ未導入でも落ちないように最低限の防御
-                    try:
-                        if getattr(customer, 'sprite', None) and getattr(customer.sprite, '_vertex_list', None):
-                            customer.sprite.delete()
-                    except Exception as e:
-                        logger.warning(f"[sprite delete fallback] id:{customer.id} err:{e}")
-                    finally:
-                        customer.sprite = None
+    #             # 安全削除（必ず safe_delete_sprite を通す）
+    #             if hasattr(customer, 'safe_delete_sprite'):
+    #                 customer.safe_delete_sprite()
+    #             else:
+    #                 # フラグ未導入でも落ちないように最低限の防御
+    #                 try:
+    #                     if getattr(customer, 'sprite', None) and getattr(customer.sprite, '_vertex_list', None):
+    #                         customer.sprite.delete()
+    #                 except Exception as e:
+    #                     logger.warning(f"[sprite delete fallback] id:{customer.id} err:{e}")
+    #                 finally:
+    #                     customer.sprite = None
 
-                # リストから取り除く
-                self.customers.pop(i)
+    #             # リストから取り除く
+    #             self.customers.pop(i)
 
-                # 来客数でシミュレーション終了
-                if self.customer_count >= END_NUM_CUSTOMER:
-                    logger.info(f"来客数が{END_NUM_CUSTOMER}人を超えました。シミュレーションを終了します。")
-                    pyglet.app.exit()
+    #             # 来客数でシミュレーション終了
+    #             if self.customer_count >= END_NUM_CUSTOMER:
+    #                 logger.info(f"来客数が{END_NUM_CUSTOMER}人を超えました。シミュレーションを終了します。")
+    #                 pyglet.app.exit()
+
+    def delete_customer(self, customer):
+        # 1. カウントの更新とラベルへの反映
+        self.customer_count += 1
+        self.parent.map.cust_label.text = f"来客数:{self.customer_count}"
+        logger.info(f"【顧客削除】id:{customer.id}")
+        
+        # 2. スプライトの安全削除
+        if hasattr(customer, 'safe_delete_sprite'):
+            customer.safe_delete_sprite()
+        else:
+            try:
+                if getattr(customer, 'sprite', None) and getattr(customer.sprite, '_vertex_list', None):
+                    customer.sprite.delete()
+            except Exception as e:
+                logger.warning(f"[sprite delete fallback] id:{customer.id} err:{e}")
+            finally:
+                customer.sprite = None
+
+        # 3. 管理リストから直接削除（インデックスのズレを気にする必要なし）
+        if customer in self.customers:
+            self.customers.remove(customer)
+
+        # 4. 終了条件のチェック
+        if self.customer_count >= END_NUM_CUSTOMER:
+            logger.info(f"来客数が{END_NUM_CUSTOMER}人を超えました。シミュレーションを終了します。")
+            pyglet.app.exit()
 
     # （任意）待機占有率：WaitArea が超シンプル構成なのでここで計算しても OK
     def get_waiting_occupancy(self):

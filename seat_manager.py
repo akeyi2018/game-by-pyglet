@@ -24,6 +24,8 @@ class SeatManager(EventDispatcher):
         # 待機場所クラスへの参照
         self.wait_area = self.customer_manager.wait_area
 
+        self.register_event_type('on_delete_customer')  # 顧客削除イベントの登録
+
     # 座席の割当、移動、飲食時間のカウント、退店処理を行うupdate関数
     def update(self, dt):
 
@@ -100,7 +102,8 @@ class SeatManager(EventDispatcher):
             if customer.state == "leaving":
                 customer.update(dt, self.parent.map)
                 if not customer.is_moving and customer.reached_final_target:
-                    customer.state = "exited"
+                    # customer.state = "exited"
+                    self.dispatch_event('on_delete_customer', customer)  # 顧客削除イベントを発火
                     logger.info(f"【退店】id: {customer.id} state: {customer.state}")
 
     # 座席の占用率を取得する関数
