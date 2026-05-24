@@ -3,22 +3,25 @@ from customer import Customer
 from loguru import logger
 import pyglet
 from wait_model import WaitAreas
+from pyglet.event import EventDispatcher
 
 # 顧客管理クラス
-class CustomerManager:
+class CustomerManager(EventDispatcher):
     def __init__(self, parent, num_customers=10):
+        # event dispatcher の初期化とイベントタイプの登録
+        super().__init__()
+        self.register_event_type('on_assign_to_seat')  # 顧客席割当イベントの登録
+
         self.parent = parent
         self.cell_size = CELL_SIZE
         self.window_height = parent.window_height
         self.batch = self.parent.batch
 
-        # --- 待機場所 ---
-        self.wait_pos_list = parent.map.wait_pos
-
         # 入口の位置
         self.entrance_pos = parent.map.get_entrance_positions()
 
-        # 新手法
+        # --- 待機場所 ---
+        self.wait_pos_list = parent.map.wait_pos
         self.wait_area = WaitAreas(self.wait_pos_list)
 
         # 顧客本体
@@ -97,14 +100,17 @@ class CustomerManager:
             if customer.state == "arrive":
                 self.wait_area.assign_customer(customer)
 
-    # 待機場所へ移動（到着したら waiting / waiting_for_top へ遷移）
+    # 待機場所へ移動（到着したら waiting_for_seat / waiting_for_top へ遷移）
     def move_to_wait_pos(self, dt):
         for customer, wait_idx in self.wait_area.wait_buffer:
             if customer.state == "moving_to_wait":
                 customer.update(dt, self.parent.map)
                 if not customer.is_moving and customer.reached_final_target:
-                    # 先頭: waiting / それ以外: waiting_for_top
-                    customer.state = "waiting_for_seat" if wait_idx == 0 else "waiting_for_top"
+                    # 先頭: waiting_for_seat / それ以外: waiting_for_top
+                    if wait_idx == 0:
+                        self.dispatch_event('on_assign_to_seat', customer)  # 顧客席割当イベントを発火
+                    else:
+                        customer.state = "waiting_for_top"
                     logger.info(
                         f"【待機場所到着】id:{customer.id} W[{wait_idx}] pos:{(customer.grid_x, customer.grid_y)} state:{customer.state}"
                     )

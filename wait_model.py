@@ -26,6 +26,15 @@ class WaitAreas:
             self.wait_buffer = [(cust, i) for cust, i in self.wait_buffer if i != idx]
             logger.info(f"【待機場所解放】W[{idx}]")
 
+    def release_by_customer(self, customer):
+        # 顧客に紐づく待機場所を解放する関数
+        for idx, (cust, i) in enumerate(self.wait_buffer):
+            if cust == customer:
+                self.use_lists[i] = False  # 待機場所の占用状態を解放
+                del self.wait_buffer[idx]  # 待機キューから該当する顧客を削除
+                logger.info(f"【待機場所解放】id:{customer.id} W[{i}]")
+                break
+
     def get_waiting_customers(self):
         # 待機キューにいる顧客のリストのうち先頭の顧客を返す
         if self.wait_buffer:

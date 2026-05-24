@@ -31,8 +31,8 @@ class Main():
         self.seat_manager = SeatManager(self)
 
         # Register events
-        # self.window.event(self.on_draw)
         self.window.push_handlers(self.on_draw, self.on_mouse_press, self.on_key_press)
+        self.customer_manager.push_handlers(self.seat_manager)  # CustomerManagerのイベントをSeatManagerに伝えるためのハンドラ登録
 
         pyglet.clock.schedule_interval(self.update, 1 / 60.0)
 

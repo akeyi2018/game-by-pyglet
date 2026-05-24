@@ -1,11 +1,14 @@
 from settings import *
 from loguru import logger
 from seat_model import SeatArea
+from pyglet.event import EventDispatcher
 
 # 座席管理クラス
-class SeatManager:
+class SeatManager(EventDispatcher):
 
     def __init__(self, parent, log_func=None):
+        super().__init__() # EventDispatcherの初期化を呼び出す
+
         # parentはMainGameクラスのインスタンスを想定
         self.parent = parent
 
@@ -23,8 +26,6 @@ class SeatManager:
 
     # 座席の割当、移動、飲食時間のカウント、退店処理を行うupdate関数
     def update(self, dt):
-        # 座席の割当
-        self.assign_seat()
 
         # 座席に移動中の顧客を更新
         self.move_to_seat(dt)
@@ -38,24 +39,31 @@ class SeatManager:
         # 混雑度ラベルの更新
         self.update_crowd_label()
 
-    # 待機中の顧客に空いている座席を割り当てる関数
-    def assign_seat(self):
-        for customer, wait_idx in self.wait_area.wait_buffer:
-            if customer.state == "waiting_for_seat":
-                for seat_idx, seat in enumerate(self.seat_area.seats):
-                    if seat["in_use"] == False:
-                        self.seat_area.assign(seat_idx, customer.id)  # 顧客IDを座席に紐づけて占有状態にする
-                        # 顧客が移動するターゲットを座席に設定
-                        target = self.seat_area.seats[seat_idx]["grid"]
-                        customer.set_new_target(*target)
-                        customer.state = "moving_to_seat"
-                        customer.face_direction = self.seat_area.seats[seat_idx]["facing"]
-                        logger.info(f"【座席割当】id:{customer.id} → seat[{seat_idx}] pos:{target} state:{customer.state}")
-                        # 待機場所の占有状態を解放
-                        self.wait_area.release(wait_idx)
-                        # 待機顧客を詰める（後ろの顧客を前に1人だけ詰める）
-                        self.wait_area.shift_waiting_customers_forward()
-                        return
+    # dispatch_event('on_assign_to_seat', customer) で呼び出される関数
+    def on_assign_to_seat(self, customer):
+        self.assign_seat(customer)
+
+                    
+    # 特定の顧客に空いている座席を割り当てる関数
+    def assign_seat(self, customer):
+        
+        # 空いている座席を探す
+        for seat_idx, seat in enumerate(self.seat_area.seats):
+            if not seat["in_use"]:
+                # 1. 座席を占有状態にする
+                self.seat_area.assign(seat_idx, customer.id)
+                
+                # 2. 顧客の移動ターゲットと状態を設定
+                target = seat["grid"]
+                customer.set_new_target(*target)
+                customer.state = "moving_to_seat"
+                customer.face_direction = seat["facing"]
+                logger.info(f"【座席割当】id:{customer.id} → seat[{seat_idx}] pos:{target} state:{customer.state}")
+                
+                # 3. 待機場所の占有状態を解放して、列を詰める
+                self.wait_area.release_by_customer(customer) 
+                self.wait_area.shift_waiting_customers_forward()
+                return
 
     # 顧客を座席に移動させる関数
     def move_to_seat(self, dt):
